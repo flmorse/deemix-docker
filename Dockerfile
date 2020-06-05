@@ -1,3 +1,5 @@
+ARG IMAGE_ARCH
+
 FROM lsiobase/alpine.${IMAGE_ARCH}:3.9
 
 ENV PUID=1000
