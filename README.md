@@ -1,3 +1,14 @@
+# IMPORTANT - NO DOCKERHUB ANYMORE
+
+Greetings. Dockerhub killed all deemix containers without any notice. That's why I have moved to gitlab. We will see if it will get removed here as well.
+
+In order to run this container, you will have to exchange your previous image tag from "bocki/deemix" to "registry.gitlab.com/bockiii/deemix-docker"
+
+That should be it, everything else stays the same. You will only get updates if you switch to the new source!
+
+ARM Builds are not working yet as I have to get used to the gitlab CI first.
+
+
 # deemix-docker
 
 Deemix in a Docker container.
@@ -17,7 +28,7 @@ $ docker run -d --name Deemix \
               -e PGID=1000 \
               -e ARL=1234567 \
               -p 9666:9666 \
-              bocki/deemix
+              registry.gitlab.com/bockiii/deemix-docker
 ```
 
 ### Example for Docker Compose:
@@ -25,7 +36,7 @@ $ docker run -d --name Deemix \
 version: '3.3'
 services:
     deemix:
-	    image: bocki/deemix
+	    image: registry.gitlab.com/bockiii/deemix-docker
         container_name: Deemix
         volumes:
             - /your/storage/path/:/downloads
@@ -56,7 +67,7 @@ The container will look for a new update in the Deemix repo on every start and w
 
 `-p 9666:9666`                          - Port opened for the web interface.
 
-`bocki/deemix`                          - This container.
+`registry.gitlab.com/bockiii/deemix-docker`                          - This container.
 
 To access the web interface, go to http://YOURSERVERIP:9666 
 
@@ -70,11 +81,11 @@ Tag includes `amd64`, `arm32v7` and `arm64v8` architectures.
 
 I am in no way affiliated with the Deemix project (or any other Deezloader-like project for that matter).
 
-Dockerhub link for this container: https://hub.docker.com/r/bocki/deemix
+Gitlab link for this container: https://gitlab.com/Bockiii/deemix-docker
 
 Repo for Deemix: https://notabug.org/RemixDev/deemix
 
-Issue Tracker for this Docker: https://github.com/Bockiii/deemix-docker/issues
+Issue Tracker for this Docker: https://gitlab.com/Bockiii/deemix-docker/-/issues
 
 
 Feel free to open an issue that is Docker related, and not related to Deemix development. Go to the Deemix repository for that.
