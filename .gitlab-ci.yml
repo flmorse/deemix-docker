@@ -21,9 +21,9 @@ build:
     - docker build --build-arg IMAGE_ARCH=$ARCH_AMD --pull -t $IMAGE:amd64 .
     - docker push $IMAGE:amd64
     - docker build --build-arg IMAGE_ARCH=$ARCH_ARM32 --pull -t $IMAGE:arm32v7 .
-    - docker push $IMAGE:armhf
+    - docker push $IMAGE:arm32v7
     - docker build --build-arg IMAGE_ARCH=$ARCH_ARM64 --pull -t $IMAGE:arm64v8 .
-    - docker push $IMAGE:arm64
+    - docker push $IMAGE:arm64v8
     - docker manifest create $IMAGE $IMAGE:amd64 $IMAGE:arm32v7 $IMAGE:arm64v8
     - docker manifest annotate $IMAGE $IMAGE:arm32v7 --os linux --arch arm
     - docker manifest annotate $IMAGE $IMAGE:arm64v8 --os linux --arch arm64
