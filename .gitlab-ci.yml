@@ -3,8 +3,8 @@ services:
   - docker:dind
 
 stages:
-  - prebuild
   - build
+  - post
 
 variables:
   IMAGE: registry.gitlab.com/bockiii/deemix-docker
@@ -16,20 +16,29 @@ variables:
 before_script:
   - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
 
-setup_qemu:
-  stage: prebuild
-  script:
-    - docker run --rm --privileged multiarch/qemu-user-static:register --reset
-
-build:
+build_arm64:
   stage: build
-  script:
-    - docker build --build-arg IMAGE_ARCH=$ARCH_AMD --pull -t $IMAGE:amd64 .
-    - docker push $IMAGE:amd64
-    - docker build --build-arg IMAGE_ARCH=$ARCH_ARM32 --pull -t $IMAGE:arm32v7 .
-    - docker push $IMAGE:arm32v7
+  tags: arm64
+  script: 
     - docker build --build-arg IMAGE_ARCH=$ARCH_ARM64 --pull -t $IMAGE:arm64v8 .
     - docker push $IMAGE:arm64v8
+
+build_arm32v7:
+  stage: build
+  tags: arm
+  script:
+    - docker build --build-arg IMAGE_ARCH=$ARCH_ARM32 --pull -t $IMAGE:arm32v7 .
+    - docker push $IMAGE:arm32v7
+
+build_amd64:
+  stage: build
+  script: 
+    - docker build --build-arg IMAGE_ARCH=$ARCH_AMD --pull -t $IMAGE:amd64 .
+    - docker push $IMAGE:amd64
+
+annotate:
+  stage: post
+  script:
     - docker manifest create $IMAGE $IMAGE:amd64 $IMAGE:arm32v7 $IMAGE:arm64v8
     - docker manifest annotate $IMAGE $IMAGE:arm32v7 --os linux --arch arm
     - docker manifest annotate $IMAGE $IMAGE:arm64v8 --os linux --arch arm64
