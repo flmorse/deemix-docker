@@ -16,9 +16,9 @@ build:
   stage: build
   script:
     - docker run --rm --privileged multiarch/qemu-user-static:register --reset
-    - docker build --pull -t -f Dockerfile.arm64v8 $IMAGE:arm64v8 .
+    - docker build --pull -f Dockerfile.arm64v8 -t $IMAGE:arm64v8 .
     - docker push $IMAGE:arm64v8
-    - docker build --pull -t -f Dockerfile.arm32v7 $IMAGE:armhf .
+    - docker build --pull -f Dockerfile.arm32v7 -t $IMAGE:armhf .
     - docker push $IMAGE:armhf
     - docker build --pull -t $IMAGE:amd64 .
     - docker push $IMAGE:amd64
