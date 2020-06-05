@@ -1,6 +1,4 @@
-ARG IMAGE_ARCH
-
-FROM lsiobase/alpine.${IMAGE_ARCH}:3.9
+FROM lsiobase/alpine.python3:3.9
 
 ENV PUID=1000
 ENV PGID=1000

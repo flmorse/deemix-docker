@@ -4,43 +4,24 @@ services:
 
 stages:
   - build
-  - post
 
 variables:
   IMAGE: registry.gitlab.com/bockiii/deemix-docker
   DOCKER_CLI_EXPERIMENTAL: enabled
-  ARCH_AMD: python3
-  ARCH_ARM32: python3.armhf
-  ARCH_ARM64: python3.arm64
 
 before_script:
   - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
 
-build_arm64:
+build:
   stage: build
-  tags: 
-    - arm64
-  script: 
-    - docker build --build-arg IMAGE_ARCH=$ARCH_ARM64 --pull -t $IMAGE:arm64v8 .
+  script:
+    - docker run --rm --privileged multiarch/qemu-user-static:register --reset
+    - docker build --pull -t $IMAGE:arm64v8 .
     - docker push $IMAGE:arm64v8
-
-build_arm32v7:
-  stage: build
-  tags:
-    - armhf
-  script:
-    - docker build --build-arg IMAGE_ARCH=$ARCH_ARM32 --pull -t $IMAGE:armhf .
+    - docker build --pull -t $IMAGE:armhf .
     - docker push $IMAGE:armhf
-
-build_amd64:
-  stage: build
-  script: 
-    - docker build --build-arg IMAGE_ARCH=$ARCH_AMD --pull -t $IMAGE:amd64 .
+    - docker build --pull -t $IMAGE:amd64 .
     - docker push $IMAGE:amd64
-
-annotate:
-  stage: post
-  script:
     - docker manifest create $IMAGE $IMAGE:amd64 $IMAGE:armhf $IMAGE:arm64v8
     - docker manifest annotate $IMAGE $IMAGE:armhf --os linux --arch armhf
     - docker manifest annotate $IMAGE $IMAGE:arm64v8 --os linux --arch arm64
