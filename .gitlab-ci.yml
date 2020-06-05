@@ -11,6 +11,7 @@ variables:
 
 before_script:
   - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
+  - apk add --update curl && rm -rf /var/cache/apk/*
 
 build:
   stage: build
