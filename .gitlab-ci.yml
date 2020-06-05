@@ -4,7 +4,6 @@ services:
 
 stages:
   - build
-  - post
 
 variables:
   IMAGE: registry.gitlab.com/bockiii/deemix-docker
@@ -23,8 +22,20 @@ build:
     - docker push $IMAGE:arm32v7
     - docker build --pull -t $IMAGE:amd64 .
     - docker push $IMAGE:amd64
-
-manifest:
-  stage: post
-  script:
-    - ./post-push
+    - set -e
+    - IMAGE_OS="linux"
+    - HOST_ARCH=$(uname -m)
+    - HOST_ARCH_ALIAS=$([[ "${HOST_ARCH}" == "x86_64" ]] && echo "amd64" || echo "${HOST_ARCH}")
+    - BUILD_ARCH=$(echo "${DOCKERFILE_PATH}" | cut -d '.' -f 2)
+    - BUILD_ARCH=$([[ "${BUILD_ARCH}" == *\/* ]] && echo "${BUILD_ARCH}" | rev | cut -d '/' -f 1 | rev || echo "${BUILD_ARCH}")
+    - QEMU_USER_STATIC_ARCH=$([[ "${BUILD_ARCH}" == "armhf" ]] && echo "${BUILD_ARCH::-2}" || echo "${BUILD_ARCH}")
+    - PLATFORMS_ARCH=$([[ "${QEMU_USER_STATIC_ARCH}" == "arm" ]] && echo "${IMAGE_OS}/${QEMU_USER_STATIC_ARCH},${IMAGE_OS}/${QEMU_USER_STATIC_ARCH}64,${IMAGE_OS}/${HOST_ARCH_ALIAS}" || echo "${IMAGE_OS}/${QEMU_USER_STATIC_ARCH}")
+    - if [[ "${HOST_ARCH}" == "${QEMU_USER_STATIC_ARCH}"* || "${BUILD_ARCH}" == "Dockerfile"  ]]; then
+        echo "Building ${BUILD_ARCH} image natively; No manifest needed for current arch."
+        exit 0
+      else
+        MANIFEST_TOOL_VERSION=$(curl -s https://api.github.com/repos/estesp/manifest-tool/releases/latest | grep 'tag_name' | cut -d\" -f4)
+        curl -L https://github.com/estesp/manifest-tool/releases/download/$MANIFEST_TOOL_VERSION/manifest-tool-$IMAGE_OS-$HOST_ARCH_ALIAS -o manifest-tool
+        chmod +x manifest-tool
+        ./manifest-tool push from-spec manifest.yaml
+      fi
