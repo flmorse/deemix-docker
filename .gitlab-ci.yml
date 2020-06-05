@@ -3,6 +3,7 @@ services:
   - docker:dind
 
 stages:
+  - prebuild
   - build
 
 variables:
@@ -14,6 +15,11 @@ variables:
 
 before_script:
   - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
+
+setup_qemu:
+  stage: prebuild
+  script:
+    - docker run --rm --privileged multiarch/qemu-user-static:register --reset
 
 build:
   stage: build
