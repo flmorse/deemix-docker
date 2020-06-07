@@ -36,7 +36,7 @@ $ docker run -d --name Deemix \
 version: '3.3'
 services:
     deemix:
-	    image: registry.gitlab.com/bockiii/deemix-docker
+        image: registry.gitlab.com/bockiii/deemix-docker
         container_name: Deemix
         volumes:
             - /your/storage/path/:/downloads
