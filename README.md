@@ -6,8 +6,6 @@ In order to run this container, you will have to exchange your previous image ta
 
 That should be it, everything else stays the same. You will only get updates if you switch to the new source!
 
-ARM Builds are not working yet as I have to get used to the gitlab CI first.
-
 
 # deemix-docker
 
@@ -27,7 +25,7 @@ $ docker run -d --name Deemix \
               -e PUID=1000 \
               -e PGID=1000 \
               -e ARL=1234567 \
-              -p 9666:9666 \
+              -p 6595:6595 \
               registry.gitlab.com/bockiii/deemix-docker
 ```
 
@@ -46,7 +44,7 @@ services:
             - PGID=1000
             - ARL=1234567
         ports:
-            - 9666:9666
+            - 6595:6595
 ```
 
 ### Updating Deemix
@@ -65,11 +63,11 @@ The container will look for a new update in the Deemix repo on every start and w
 
 `-e ARL=1234567`                        - OPTIONAL: If you want Deemix to automatically log in for everyone who opens the website, provide your ARL token via this Environment variable.
 
-`-p 9666:9666`                          - Port opened for the web interface.
+`-p 6595:6595`                          - Port opened for the web interface.
 
 `registry.gitlab.com/bockiii/deemix-docker`                          - This container.
 
-To access the web interface, go to http://YOURSERVERIP:9666 
+To access the web interface, go to http://YOURSERVERIP:6595 
 
 ## Tags
 

@@ -7,9 +7,9 @@ HOME=/deem
 if [ -f "/config/.arl" ]; then
     echo "[services.d] Starting with ARL"
 	exec \
-		s6-setuidgid abc python3 /deemix/server.py --serverwide-arl --host 0.0.0.0
+		s6-setuidgid abc python3 /deemix/server.py 6595 --serverwide-arl --host 0.0.0.0
 else 
 	echo "[services.d] Starting without ARL"
 	exec \
-		s6-setuidgid abc python3 /deemix/server.py --host 0.0.0.0
+		s6-setuidgid abc python3 /deemix/server.py 6595 --host 0.0.0.0
 fi

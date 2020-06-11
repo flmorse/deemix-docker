@@ -7,26 +7,31 @@ stages:
 
 variables:
   IMAGE: registry.gitlab.com/bockiii/deemix-docker
+  IMAGE_TAG: latest
   DOCKER_CLI_EXPERIMENTAL: enabled
 
 before_script:
   - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
   - apk add --update curl && rm -rf /var/cache/apk/*
+  - export CI_JOB_TIMESTAMP=$(date --utc -Iseconds)
 
 build:
   stage: build
   script:
     - docker run --rm --privileged multiarch/qemu-user-static:register --reset
-    - docker build --pull -f Dockerfile.arm64v8 -t $IMAGE:arm64v8 .
-    - docker push $IMAGE:arm64v8
-    - docker build --pull -f Dockerfile.arm32v7 -t $IMAGE:arm32v7 .
-    - docker push $IMAGE:arm32v7
-    - docker build --pull -t $IMAGE:amd64 .
-    - docker push $IMAGE:amd64
-    - set -e
-    - HOST_ARCH=$(uname -m)
-    - HOST_ARCH_ALIAS=$([[ "${HOST_ARCH}" == "x86_64" ]] && echo "amd64" || echo "${HOST_ARCH}")
-    - MANIFEST_TOOL_VERSION=$(curl -s https://api.github.com/repos/estesp/manifest-tool/releases/latest | grep 'tag_name' | cut -d\" -f4)
-    - curl -L https://github.com/estesp/manifest-tool/releases/download/$MANIFEST_TOOL_VERSION/manifest-tool-linux-$HOST_ARCH_ALIAS -o manifest-tool
-    - chmod +x manifest-tool
-    - ./manifest-tool push from-spec manifest.yaml
+    - docker build --pull -f Dockerfile.arm64v8 --build-arg BUILDDATE=$CI_JOB_TIMESTAMP -t $IMAGE:arm64v8-${IMAGE_TAG} .
+    - docker build --pull -f Dockerfile.arm32v7 --build-arg BUILDDATE=$CI_JOB_TIMESTAMP -t $IMAGE:arm32v7-${IMAGE_TAG} .
+    - docker build --pull --build-arg BUILDDATE=$CI_JOB_TIMESTAMP -t $IMAGE:amd64-${IMAGE_TAG} .
+    - docker push $IMAGE:arm64v8-${IMAGE_TAG}
+    - docker push $IMAGE:arm32v7-${IMAGE_TAG}
+    - docker push $IMAGE:amd64-${IMAGE_TAG}
+    - docker manifest create "$IMAGE:${IMAGE_TAG}"
+      "$IMAGE:amd64-${IMAGE_TAG}"
+      "$IMAGE:arm32v7-${IMAGE_TAG}"
+      "$IMAGE:arm64v8-${IMAGE_TAG}"
+    - docker manifest annotate "$IMAGE:${IMAGE_TAG}" "$IMAGE:arm32v7-${IMAGE_TAG}" --os=linux --arch=arm   --variant=v7
+    - docker manifest annotate "$IMAGE:${IMAGE_TAG}" "$IMAGE:arm64v8-${IMAGE_TAG}" --os=linux --arch=arm64 --variant=v8
+      # Push manifest to official registry
+    - docker manifest push "$IMAGE:${IMAGE_TAG}"
+      # Validate multi-arch manifest
+    - docker run --rm mplatform/mquery:v0.2 $IMAGE:${IMAGE_TAG}

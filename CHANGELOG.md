@@ -1,0 +1,6 @@
+# Changelog
+
+## 2020-06-11
+- First entry in the changelog. This is for the container only, not for deemix or any of it's components.
+- Switched port to 6595 from 9666 (due to pyweb update). THIS SHOULD BE FIX NOW. I have hard-coded the port into the run parameter, so even if deemix itself will switch the port, you should always just have to map to 6595
+- Switched the base from a pre-build alpine-python3 build (that was pretty old) to the current alpine base with my own python installation.

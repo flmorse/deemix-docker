@@ -1,36 +1,49 @@
 FROM alpine AS builder
 
 # Download QEMU, see https://github.com/docker/hub-feedback/issues/1261
-#ENV QEMU_URL https://github.com/balena-io/qemu/releases/download/v3.0.0%2Bresin/qemu-3.0.0+resin-arm.tar.gz
 ENV QEMU_URL https://github.com/balena-io/qemu/releases/download/v4.0.0-balena/qemu-4.0.0-balena-arm.tar.gz
 RUN apk add curl && curl -L ${QEMU_URL} | tar zxvf - -C . --strip-components 1
 
-FROM lsiobase/alpine.python3.armhf:3.9
+
+FROM lsiobase/alpine:arm32v7-3.12
 
 # Add QEMU
 COPY --from=builder qemu-arm-static /usr/bin
 
-ENV PUID=1000
-ENV PGID=1000
+ARG BUILDDATE
 
-EXPOSE 9666
+LABEL \
+	app.deemix.image.created="${BUILDDATE}" \
+	app.deemix.image.url="https://gitlab.com/Bockiii/deemix-docker" \
+    app.deemix.image.title="Docker image for Deemix" \
+	app.deemix.image.description="Docker image for Deemix and the pyweb frontend" \
+    maintainer="Bocki"
 
 RUN \
-    apk update && \
-    apk add --no-cache \
+ echo "**** install build packages ****" && \
+ apk add --no-cache --virtual=build-dependencies \
     gcc \
     g++ \
     libffi-dev \
     python3-dev \
-    make
-
-RUN \
-    mkdir /deem && \
-    chown abc:abc /deem && \
-    rm -R /config && \
-    ln -sf /deem/.config/deemix /config && \
-    ln -sf /downloads /deem/deemix\ Music
+    git \
+    make && \
+ echo "**** install packages ****" && \
+ apk add --no-cache \
+    py3-pip \
+    python3 && \
+ echo "**** setup directories ****" && \
+ mkdir /deem && \
+ chown abc:abc /deem && \
+ rm -R /config && \
+ ln -sf /deem/.config/deemix /config && \
+ ln -sf /downloads /deem/deemix\ Music && \
+ echo "**** clean up ****" && \
+ rm -rf \
+	/root/.cache \
+	/tmp/*
 
 COPY root/ /
 
+EXPOSE 6595
 VOLUME /downloads /config
