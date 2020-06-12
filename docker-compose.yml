@@ -10,5 +10,6 @@ services:
             - PUID=1000
             - PGID=1000
             - ARL=1234567
+            - UMASK_SET=022
         ports:
             - 6595:6595
