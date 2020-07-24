@@ -79,13 +79,17 @@ To access the web interface, go to http://YOURSERVERIP:6595
 
 Tag includes `amd64`, `arm32v7` and `arm64v8` architectures.
 
+## Changelog
+
+See CHANGELOG.md
+
 ## Disclaimer and Links
 
 I am in no way affiliated with the Deemix project (or any other Deezloader-like project for that matter).
 
 Gitlab link for this container: https://gitlab.com/Bockiii/deemix-docker
 
-Repo for Deemix: https://notabug.org/RemixDev/deemix
+Repo for Deemix: https://codeberg.org/RemixDev/deemix
 
 Issue Tracker for this Docker: https://gitlab.com/Bockiii/deemix-docker/-/issues
 

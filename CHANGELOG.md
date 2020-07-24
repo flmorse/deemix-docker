@@ -1,5 +1,8 @@
 # Changelog
 
+## 2020-07-24
+- Updated code to pull from codeberg instead of notabug
+
 ## 2020-06-12
 - Added UMASK_SET environment variable (I misunderstood how it worked.. now it should work)
 
