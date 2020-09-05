@@ -15,8 +15,9 @@ fi
 # if the arl was previously set but is out of date, update the file with the arl from the env variable
 
 if [ ${#ARL} -gt 10 ]; then
-    OLDARL=$(cat /config/.arl)
-    if $ARL -ne $OLDARL; then
+    # this file might not exist; happens when the users runs for the first time
+    OLDARL=$(cat /config/.arl 2>/dev/null || echo 0) # ignore if the file doesn't exist
+    if [ "$ARL" != "$OLDARL" ]; then
         echo "[cont-init.d] !!! ARL from environment variable does not match current ARL. Using environment variable. !!!"
         echo "[cont-init.d] !!! Please update your ARL in the variable instead of the webinterface or remove the ARL from the container call. !!!"
         printf $ARL > /config/.arl
