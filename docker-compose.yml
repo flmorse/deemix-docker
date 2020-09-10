@@ -11,5 +11,6 @@ services:
             - PGID=1000
             - ARL=1234567
             - UMASK_SET=022
+            - DEEZUI=false
         ports:
             - 6595:6595
