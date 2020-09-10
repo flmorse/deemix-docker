@@ -1,5 +1,14 @@
 # Changelog
 
+## 2020-09-10
+- added support for deezloader ui by environment variable "DEEZUI"
+
+## 2020-09-08
+- Switched the installer to the new server-requirements
+
+## 2020-09-05
+- Fixed the ARL updater
+
 ## 2020-07-24
 - Updated code to pull from codeberg instead of notabug
 

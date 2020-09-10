@@ -6,8 +6,16 @@ echo "[cont-init.d] Downloading and unpacking"
 
 if [ ! -f "/deemix/server.py" ]; then
     echo "[cont-init.d] First start, cloning repo"
-    git clone --recurse-submodules https://codeberg.org/RemixDev/deemix-pyweb.git deemix
-    touch /deemix/updated
+    if [[ "${DEEZUI}" == "true" ]]; then
+        echo "[cont-init.d] Using Deezloader UI"
+        git clone https://codeberg.org/RemixDev/deemix-pyweb.git /deemix
+        git clone https://codeberg.org/RemixDev/deezloader-deemix.git /deemix/webui
+        touch /deemix/updated
+    else
+        echo "[cont-init.d] Using Deemix UI"
+        git clone --recurse-submodules https://codeberg.org/RemixDev/deemix-pyweb.git /deemix
+        touch /deemix/updated
+    fi
 else
     cd /deemix
     localv=$(git rev-parse HEAD)
@@ -16,7 +24,16 @@ else
         echo -e "[cont-init.d] Latest Version. No update needed"
     else
         echo -e "[cont-init.d] Newer Version. Updating"
-        git pull --recurse-submodules
-        touch /deemix/updated
+        if [[ "${DEEZUI}" == "true" ]]; then
+            echo "[cont-init.d] Using Deezloader UI"
+            git pull
+            cd /deemix/webui
+            git pull
+            touch /deemix/updated
+        else
+            echo "[cont-init.d] Using Deemix UI"
+            git pull --recurse-submodules
+            touch /deemix/updated
+        fi
     fi
 fi
