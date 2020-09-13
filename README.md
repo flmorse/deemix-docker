@@ -16,6 +16,7 @@ Deemix in a Docker container.
 Deemix will work out of the box, but you should at least set a fixed port for the web interface and mount a folder to the container for where your downloads will go.
 
 You can also map a folder on the host for the config file (mount a local folder to /config/), but that's optional. If they add or rework settings in the future, there is no guarantee that your old configs will work, so beware.
+> If using a config folder and global ARL, make sure to set it is in /path/config/.arl and that the file is the plaintext token
 
 ### Example for Docker:
 ```
