@@ -17,6 +17,7 @@ RUN \
     libffi-dev \
     python3-dev \
     git \
+    curl \
     make && \
  echo "**** install packages ****" && \
  apk add --no-cache \
