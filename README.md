@@ -94,8 +94,6 @@ I am in no way affiliated with the Deemix project (or any other Deezloader-like 
 
 Gitlab link for this container: https://gitlab.com/Bockiii/deemix-docker
 
-Repo for Deemix: https://codeberg.org/RemixDev/deemix
-
 Issue Tracker for this Docker: https://gitlab.com/Bockiii/deemix-docker/-/issues
 
 
