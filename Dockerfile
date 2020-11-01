@@ -18,6 +18,7 @@ RUN \
     python3-dev \
     git \
     curl \
+    jq \
     make && \
  echo "**** install packages ****" && \
  apk add --no-cache \
@@ -25,10 +26,10 @@ RUN \
     python3 && \
  echo "**** setup directories ****" && \
  mkdir /deem && \
+ mkdir /downloads && \
  chown abc:abc /deem && \
  rm -R /config && \
  ln -sf /deem/.config/deemix /config && \
- ln -sf /downloads /deem/deemix\ Music && \
  echo "**** clean up ****" && \
  rm -rf \
 	/root/.cache \

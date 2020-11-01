@@ -1,5 +1,9 @@
 # Changelog
 
+## 2020-11-01
+- Hoster changed
+- Fixed download folder location (hopefully permanently)
+
 ## 2020-09-10
 - added support for deezloader ui by environment variable "DEEZUI"
 
