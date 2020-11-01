@@ -25,3 +25,4 @@ fi
 
 # Fix misconfigured download locations. The container's download map is always /downloads.
 jq '.downloadLocation = "/downloads"' /config/config.json > tmp.$$.json && mv tmp.$$.json /config/config.json
+chown abc:abc /config/config.json
