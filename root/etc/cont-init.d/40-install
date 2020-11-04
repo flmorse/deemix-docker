@@ -24,5 +24,7 @@ if [ ${#ARL} -gt 10 ]; then
 fi
 
 # Fix misconfigured download locations. The container's download map is always /downloads.
-jq '.downloadLocation = "/downloads"' /config/config.json > tmp.$$.json && mv tmp.$$.json /config/config.json
-chown abc:abc /config/config.json
+if [ -f "/config/config.json" ]; then
+    jq '.downloadLocation = "/downloads"' /config/config.json > tmp.$$.json && mv tmp.$$.json /config/config.json
+    chown abc:abc /config/config.json
+fi
