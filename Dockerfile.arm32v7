@@ -11,6 +11,7 @@ FROM lsiobase/alpine:arm32v7-3.12
 COPY --from=builder qemu-arm-static /usr/bin
 
 ARG BUILDDATE
+ENV BUILDDATEENV=${BUILDDATE}
 
 LABEL \
 	app.deemix.image.created="${BUILDDATE}" \
