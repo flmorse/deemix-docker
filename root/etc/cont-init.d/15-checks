@@ -1,0 +1,8 @@
+#!/usr/bin/with-contenv bash
+
+# test write access to download and config folder and test internet connectivity
+printf '[cont-init.d] Testing Access\n' && \
+printf '%-50s %2s %-5s \n' "[cont-init.d] Container Builddate" ":" "$BUILDDATEENV" && \
+if [ -w "/downloads" ]; then printf '%-50s %2s %-5s \n' "[cont-init.d] Download Folder Write Access" ":" "Success"; else printf '%-50s %2s %-5s \n' "[cont-init.d] Download Folder Write Access" ":" "Failure"; fi && \
+if [ -w "/config" ]; then printf '%-50s %2s %-5s \n' "[cont-init.d] Config Folder Write Access" ":" "Success"; else printf '%-50s %2s %-5s \n' "[cont-init.d] Config Folder Write Access" ":" "Failure"; fi && \
+if ping -c 1 1.1.1.1 &> /dev/null; then printf '%-50s %2s %-5s \n' "[cont-init.d] Internet Access" ":" "Success"; else printf '%-50s %2s %-5s \n' "[cont-init.d] Internet Access" ":" "Failure"; fi

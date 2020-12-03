@@ -1,6 +1,7 @@
 FROM lsiobase/alpine:3.12
 
 ARG BUILDDATE
+ENV BUILDDATEENV=${BUILDDATE}
 
 LABEL \
 	app.deemix.image.created="${BUILDDATE}" \
