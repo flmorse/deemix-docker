@@ -1,5 +1,9 @@
 # Changelog
-
+## 2021-03-03
+- Fixed #58
+- Upgraded Alpine version from 3.12 to 3.13
+- Upgraded QEMU from 4.0.0 to 5.2.0
+- Added warning about error message with debian buster based systems to readme
 ## 2020-11-01
 - Hoster changed
 - Fixed download folder location (hopefully permanently)
