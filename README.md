@@ -1,11 +1,10 @@
-# IMPORTANT - NO DOCKERHUB ANYMORE
+# IMPORTANT - ISSUES WITH NEW ALPINE VERSION
 
-Greetings. Dockerhub killed all deemix containers without any notice. That's why I have moved to gitlab. We will see if it will get removed here as well.
+The new Alpine 3.13 has some known issues with docker hosts running a Debian Buster (only 32bit versions) based distribution (like Raspberry PI OS).
 
-In order to run this container, you will have to exchange your previous image tag from "bocki/deemix" to "registry.gitlab.com/bockiii/deemix-docker"
+See this link for more information and also a workaround: https://docs.linuxserver.io/faq#libseccomp
 
-That should be it, everything else stays the same. You will only get updates if you switch to the new source!
-
+I have successfully used option 3.
 
 # deemix-docker
 
