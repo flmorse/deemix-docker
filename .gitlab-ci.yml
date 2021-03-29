@@ -34,4 +34,4 @@ build:
       # Push manifest to official registry
     - docker manifest push "$IMAGE:${IMAGE_TAG}"
       # Validate multi-arch manifest
-    - docker run --rm mplatform/mquery:v0.2 $IMAGE:${IMAGE_TAG}
+    - docker run --rm mplatform/mquery $IMAGE:${IMAGE_TAG}
