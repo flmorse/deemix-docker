@@ -7,12 +7,18 @@ cd /deemix
 
 HOME=/deem
 
+if [ ! -z ${INTPORT} ]; then
+	port=$INTPORT
+else
+	port=6595
+fi
+
 if [ -f "/config/.arl" ]; then
     echo "[services.d] Starting with ARL"
 	exec \
-		s6-setuidgid abc python3 /deemix/server.py 6595 --serverwide-arl --host 0.0.0.0
+		s6-setuidgid abc python3 /deemix/server.py $port --serverwide-arl --host 0.0.0.0
 else 
 	echo "[services.d] Starting without ARL"
 	exec \
-		s6-setuidgid abc python3 /deemix/server.py 6595 --host 0.0.0.0
+		s6-setuidgid abc python3 /deemix/server.py $port --host 0.0.0.0
 fi
