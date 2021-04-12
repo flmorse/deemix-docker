@@ -7,6 +7,8 @@ cd /deemix
 
 HOME=/deem
 
+printf '%-50s %2s %-5s \n' "[cont-init.d] Package Build Date" ":" "$(cat /deemix/packagedate)"
+
 if [ ! -z ${INTPORT} ]; then
 	port=$INTPORT
 else

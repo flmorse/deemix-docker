@@ -1,6 +1,8 @@
 # Changelog
+## 2021-04-12
+- Added "packagedate" to see when the source was pulled in the logfiles
 ## 2021-03-29
-- Added internal port functionality, see #68
+- Added internal port functionality, see #69
 ## 2021-03-03
 - Fixed #58
 - Upgraded Alpine version from 3.12 to 3.13
