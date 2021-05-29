@@ -1,19 +1,19 @@
 ARG FROM_ARCH=amd64
-
+ARG QEMU_ARCH
+ENV QEMU_ARCH=${QEMU_ARCH:-x86_64}
 # Multi-stage build, see https://docs.docker.com/develop/develop-images/multistage-build/
 FROM alpine AS builder
 
-ARG BUILDDATE
-ENV BUILDDATEENV=${BUILDDATE}
+# Add QEMU
+ENV QEMU_URL https://github.com/balena-io/qemu/releases/download/v5.2.0%2Bbalena4/qemu-5.2.0.balena4-$QEMU_ARCH.tar.gz
+RUN apk add curl && curl -L ${QEMU_URL} | tar zxvf - -C . --strip-components 1
 
 FROM lsiobase/alpine:$FROM_ARCH-3.13
 
-# Add QEMU
+COPY --from=builder qemu-$QEMU_ARCH-static /usr/bin
 
-ARG QEMU_ARCH
-ENV QEMU_ARCH=${QEMU_ARCH:-x86_64}
-
-COPY qemu/qemu-${QEMU_ARCH}-static /usr/bin/
+ARG BUILDDATE
+ENV BUILDDATEENV=${BUILDDATE}
 
 LABEL \
 	app.deemix.image.created="${BUILDDATE}" \
