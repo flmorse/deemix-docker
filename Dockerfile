@@ -6,7 +6,7 @@ FROM alpine AS builder
 ARG BUILDDATE
 ENV BUILDDATEENV=${BUILDDATE}
 
-FROM lsiobase/alpine:%FROM_ARCH-3.13
+FROM lsiobase/alpine:$FROM_ARCH-3.13
 
 # Add QEMU
 
