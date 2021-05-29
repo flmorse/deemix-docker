@@ -19,8 +19,8 @@ build:
   stage: build
   script:
     - docker run --rm --privileged multiarch/qemu-user-static:register --reset
-    - docker build --pull -f Dockerfile --build-arg BUILDDATE=$CI_JOB_TIMESTAMP --build-arg FROM_ARCH=arm64v8 -t $IMAGE:arm64v8-${IMAGE_TAG} .
-    - docker build --pull -f Dockerfile --build-arg BUILDDATE=$CI_JOB_TIMESTAMP --build-arg FROM_ARCH=arm32v7 -t $IMAGE:arm32v7-${IMAGE_TAG} .
+    - docker build --pull -f Dockerfile --build-arg BUILDDATE=$CI_JOB_TIMESTAMP --build-arg FROM_ARCH=arm64v8 --build-arg QEMU_ARCH=aarch64 -t $IMAGE:arm64v8-${IMAGE_TAG} .
+    - docker build --pull -f Dockerfile --build-arg BUILDDATE=$CI_JOB_TIMESTAMP --build-arg FROM_ARCH=arm32v7 --build-arg QEMU_ARCH=arm -t $IMAGE:arm32v7-${IMAGE_TAG} .
     - docker build --pull --build-arg BUILDDATE=$CI_JOB_TIMESTAMP -t $IMAGE:amd64-${IMAGE_TAG} .
     - docker push $IMAGE:arm64v8-${IMAGE_TAG}
     - docker push $IMAGE:arm32v7-${IMAGE_TAG}
