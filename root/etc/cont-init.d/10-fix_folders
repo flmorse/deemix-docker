@@ -1,0 +1,9 @@
+#!/usr/bin/with-contenv bash
+
+# test write access to download and config folder and test internet connectivity
+printf '[cont-init.d] Fixing Folder Permissions\n'
+
+chown abc:abc /deemix-gui/server
+chown -R abc:abc /deem
+chown -R abc:abc /config
+chown -R abc:abc /deemix-gui/server/music

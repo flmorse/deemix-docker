@@ -1,26 +1,13 @@
 #!/usr/bin/with-contenv bash
 
+printf '%-50s %2s %-5s \n' "[services.d] Package Build Date" ":" "$(cat /deemix/packagedate)"
+
 UMASK_SET=${UMASK_SET:-022}
 umask "$UMASK_SET"
 
-cd /deemix
+cd /deemix-gui/server
 
 HOME=/deem
 
-printf '%-50s %2s %-5s \n' "[cont-init.d] Package Build Date" ":" "$(cat /deemix/packagedate)"
-
-if [ ! -z ${INTPORT} ]; then
-	port=$INTPORT
-else
-	port=6595
-fi
-
-if [ -f "/config/.arl" ]; then
-    echo "[services.d] Starting with ARL"
-	exec \
-		s6-setuidgid abc python3 /deemix/server.py $port --serverwide-arl --host 0.0.0.0
-else 
-	echo "[services.d] Starting without ARL"
-	exec \
-		s6-setuidgid abc python3 /deemix/server.py $port --host 0.0.0.0
-fi
+echo "[services.d] Starting Deemix"
+s6-setuidgid abc yarn start

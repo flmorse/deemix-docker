@@ -1,4 +1,6 @@
 # Changelog
+## 2021-05-30
+- Added next gen version of deemix as container variant
 ## 2021-04-12
 - Added "packagedate" to see when the source was pulled in the logfiles
 ## 2021-03-29
