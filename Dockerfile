@@ -1,4 +1,4 @@
-FROM lsiobase/alpine:3.13
+FROM lsiobase/ubuntu:focal
 
 ARG BUILDDATE
 ENV BUILDDATEENV=${BUILDDATE}
@@ -6,38 +6,33 @@ ENV BUILDDATEENV=${BUILDDATE}
 LABEL \
 	app.deemix.image.created="${BUILDDATE}" \
 	app.deemix.image.url="https://gitlab.com/Bockiii/deemix-docker" \
-    app.deemix.image.title="Docker image for Deemix" \
-	app.deemix.image.description="Docker image for Deemix and the pyweb frontend" \
-    maintainer="Bocki"
+	app.deemix.image.title="Docker image for Deemix" \
+	app.deemix.image.description="Docker image for Deemix" \
+	maintainer="Bocki"
 
-RUN \
- echo "**** install build packages ****" && \
- apk add --no-cache --virtual=build-dependencies \
-    gcc \
-    g++ \
-    libffi-dev \
-    python3-dev \
-    git \
-    curl \
-    jq \
-    make && \
- echo "**** install packages ****" && \
- apk add --no-cache \
-    py3-pip \
-    python3 && \
- echo "**** setup directories ****" && \
- mkdir /deem && \
- mkdir /deem/Music && \
- rm -R /config && \
- ln -sf /deem/.config/deemix /config && \
- ln -sf /downloads /deem/Music/deemix\ Music && \
- chown abc:abc /deem && \
- echo "**** clean up ****" && \
- rm -rf \
-	/root/.cache \
-	/tmp/*
+RUN curl -fsSL https://deb.nodesource.com/setup_16.x | bash && \
+	apt-get -y --no-install-recommends install >/dev/null \
+		nodejs \
+		jq \
+		iputils-ping \
+		curl \
+		git && \
+	apt-get clean && \
+	rm -rf /var/lib/apt/lists/* && \
+	npm install --global yarn
+
+RUN git clone https://gitlab.com/RemixDev/deemix-gui.git --recursive && \
+	rm -R /config && \
+	mkdir /deemix-gui/server/music && \
+	mkdir -p /deem/.config/deemix && \
+	ln -sf /deemix-gui/server/music /downloads && \
+	ln -sf /deem/.config/deemix /config
+
+WORKDIR /deemix-gui/server
+
+RUN yarn install
 
 COPY root/ /
 
 EXPOSE 6595
-VOLUME /downloads /config
+ENTRYPOINT [ "/init" ]

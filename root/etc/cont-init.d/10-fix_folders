@@ -1,0 +1,16 @@
+#!/usr/bin/with-contenv bash
+
+# test write access to download and config folder and test internet connectivity
+printf '[cont-init.d] Fixing Folder Permissions\n'
+
+chown abc:abc /deemix-gui/server
+chown -R abc:abc /deem
+chown -R abc:abc /config
+chown -R abc:abc /deemix-gui/server/music
+
+
+# Fix misconfigured download locations. The container's download map is always /downloads.
+if [ -f "/config/config.json" ]; then
+    jq '.downloadLocation = "/downloads"' /config/config.json > tmp.$$.json && mv tmp.$$.json /config/config.json
+    chown abc:abc /config/config.json
+fi
