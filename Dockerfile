@@ -9,7 +9,7 @@ RUN case "${FROM_ARCH}" in \
     amd64) echo "X86_64 detected. No QEMU needed.";; \
     arm32v7) QEMU_ARCH='arm';; \
     arm64v8) QEMU_ARCH='aarch64';; \
-  esac \
+  esac
 
 ADD https://github.com/balena-io/qemu/releases/download/v5.2.0%2Bbalena4/qemu-5.2.0.balena4-$QEMU_ARCH.tar.gz .
 RUN tar zxvf qemu-5.2.0.balena4-$QEMU_ARCH.tar.gz --strip-components 1
