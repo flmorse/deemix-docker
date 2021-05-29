@@ -6,7 +6,7 @@ FROM alpine AS builder
 # Download QEMU
 
 RUN case "${FROM_ARCH}" in \
-    amd64) echo "X86_64 detected. No QEMU needed.";; \
+    amd64) QEMU_ARCH='arm';; \
     arm32v7) QEMU_ARCH='arm';; \
     arm64v8) QEMU_ARCH='aarch64';; \
   esac
@@ -25,7 +25,7 @@ LABEL \
 	app.deemix.image.created="${BUILDDATE}" \
 	app.deemix.image.url="https://gitlab.com/Bockiii/deemix-docker" \
     app.deemix.image.title="Docker image for Deemix" \
-	app.deemix.image.description="Docker image for Deemix and the pyweb frontend" \
+	app.deemix.image.description="Docker image for Deemix" \
     maintainer="Bocki"
 
 ENV NODE_VERSION 16.2.0
