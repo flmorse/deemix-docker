@@ -5,13 +5,13 @@ FROM alpine AS builder
 
 # Add QEMU
 ENV QEMU_ARCH=${QEMU_ARCH:-x86_64}
-ENV QEMU_URL https://github.com/balena-io/qemu/releases/download/v5.2.0%2Bbalena4/qemu-5.2.0.balena4-$QEMU_ARCH.tar.gz
+ENV QEMU_URL https://github.com/balena-io/qemu/releases/download/v5.2.0%2Bbalena4/qemu-5.2.0.balena4-${QEMU_ARCH}.tar.gz
 RUN apk add curl && curl -L ${QEMU_URL} | tar zxvf - -C . --strip-components 1
 
-FROM lsiobase/alpine:$FROM_ARCH-3.13
+FROM lsiobase/alpine:${FROM_ARCH}-3.13
 
 ENV QEMU_ARCH=${QEMU_ARCH:-x86_64}
-COPY --from=builder qemu-$QEMU_ARCH-static /usr/bin
+COPY --from=builder qemu-${QEMU_ARCH}-static /usr/bin
 
 ARG BUILDDATE
 ENV BUILDDATEENV=${BUILDDATE}
