@@ -3,11 +3,13 @@ ARG QEMU_ARCH=x86_64
 
 FROM alpine AS builder
 
+ENV QEMU_ARCH=${QEMU_ARCH:-x86_64}
 ADD https://github.com/multiarch/qemu-user-static/releases/download/v5.2.0-2/qemu-$QEMU_ARCH-static.tar.gz .
 RUN tar zxvf qemu-$QEMU_ARCH-static.tar.gz --strip-components 1
 
 FROM lsiobase/alpine:${FROM_ARCH}-3.13
 
+ENV QEMU_ARCH=${QEMU_ARCH:-x86_64}
 COPY --from=builder qemu-$QEMU_ARCH-static /usr/bin
 
 ARG BUILDDATE
