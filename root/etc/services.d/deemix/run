@@ -10,4 +10,4 @@ cd /deemix-gui/server
 HOME=/deem
 
 echo "[services.d] Starting Deemix"
-s6-setuidgid abc npm start
+s6-setuidgid abc yarn start
