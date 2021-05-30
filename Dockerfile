@@ -27,7 +27,7 @@ RUN git clone https://gitlab.com/RemixDev/deemix-gui.git --recursive && \
 
 WORKDIR /deemix-gui/server
 
-RUN npm install
+RUN /bin/bash -c 'npm install'
 
 COPY root/ /
 
