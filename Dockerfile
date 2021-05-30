@@ -12,7 +12,7 @@ LABEL \
 
 RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash && \
     chmod +x /root/.nvm/nvm.sh && \
-    /root/.nvm/nvm.sh install 16.2.0
+    /root/.nvm/nvm.sh install v16.2.0
 
 RUN apt-get update && \
     apt-get install -y git
