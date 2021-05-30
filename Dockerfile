@@ -26,7 +26,7 @@ RUN git clone https://gitlab.com/RemixDev/deemix-gui.git --recursive && \
 
 WORKDIR /deemix-gui/server
 
-RUN yarn install
+RUN npm install
 
 COPY root/ /
 
