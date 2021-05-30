@@ -14,8 +14,7 @@ RUN apt-get update && \
     apt-get install -y git
 
 RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash && \
-    export NVM_DIR="$HOME/.nvm" && \
-    nvm install 16.2.0
+    /root/.nvm/nvm.sh install 16.2.0
 
 RUN git clone https://gitlab.com/RemixDev/deemix-gui.git --recursive && \
     rm -R /config && \
