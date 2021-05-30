@@ -1,6 +1,6 @@
 #!/usr/bin/with-contenv bash
 
-printf '%-50s %2s %-5s \n' "[services.d] Package Build Date" ":" "$(cat /deemix/packagedate)"
+#printf '%-50s %2s %-5s \n' "[services.d] Package Build Date" ":" "$(cat /deemix/packagedate)"
 
 UMASK_SET=${UMASK_SET:-022}
 umask "$UMASK_SET"
@@ -10,4 +10,4 @@ cd /deemix-gui/server
 HOME=/deem
 
 echo "[services.d] Starting Deemix"
-s6-setuidgid abc yarn start-build
+s6-setuidgid abc npm start
