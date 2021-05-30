@@ -11,7 +11,11 @@ LABEL \
     maintainer="Bocki"
 
 RUN curl -fsSL https://deb.nodesource.com/setup_16.x | bash && \
-  apt-get install -y nodejs
+	apt-get -y --no-install-recommends install >/dev/null \
+		nodejs \
+		yarn && \
+	apt-get clean && \
+  rm -rf /var/lib/apt/lists/*;
 
 #RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
 #ENV NVM_DIR=/root/.nvm
@@ -30,7 +34,7 @@ RUN git clone https://gitlab.com/RemixDev/deemix-gui.git --recursive && \
 
 WORKDIR /deemix-gui/server
 
-RUN npm install
+RUN yarn install
 
 COPY root/ /
 
