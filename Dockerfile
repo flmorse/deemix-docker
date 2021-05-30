@@ -1,16 +1,19 @@
 ARG FROM_ARCH=amd64
-ARG QEMU_ARCH=x86_64
 
+# Multi-stage build, see https://docs.docker.com/develop/develop-images/multistage-build/
 FROM alpine AS builder
 
-ENV QEMU_ARCH=${QEMU_ARCH:-x86_64}
-ADD https://github.com/multiarch/qemu-user-static/releases/download/v5.2.0-2/qemu-$QEMU_ARCH-static.tar.gz .
-RUN tar zxvf qemu-$QEMU_ARCH-static.tar.gz --strip-components 1
+# Download QEMU
+ADD https://github.com/balena-io/qemu/releases/download/v5.2.0%2Bbalena4/qemu-5.2.0.balena4-arm.tar.gz .
+RUN tar zxvf qemu-5.2.0.balena4-arm.tar.gz --strip-components 1
+ADD https://github.com/balena-io/qemu/releases/download/v5.2.0%2Bbalena4/qemu-5.2.0.balena4-aarch64.tar.gz .
+RUN tar zxvf qemu-5.2.0.balena4-aarch64.tar.gz --strip-components 1
 
-FROM lsiobase/alpine:${FROM_ARCH}-3.13
+FROM lsiobase/alpine:$FROM_ARCH-3.13
 
-ENV QEMU_ARCH=${QEMU_ARCH:-x86_64}
-COPY --from=builder qemu-$QEMU_ARCH-static /usr/bin
+# Add QEMU
+COPY --from=builder qemu-arm-static /usr/bin
+COPY --from=builder qemu-aarch64-static /usr/bin
 
 ARG BUILDDATE
 ENV BUILDDATEENV=${BUILDDATE}
