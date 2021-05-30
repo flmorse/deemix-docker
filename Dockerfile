@@ -1,11 +1,14 @@
 ARG FROM_ARCH=amd64
+ARG QEMU_ARCH=x86_64
+
+FROM alpine AS builder
+
+ADD https://github.com/balena-io/qemu/releases/download/v5.2.0%2Bbalena4/qemu-5.2.0.balena4-$QEMU_ARCH.tar.gz .
+RUN tar zxvf qemu-5.2.0.balena4-$QEMU_ARCH.tar.gz --strip-components 1
 
 FROM lsiobase/alpine:${FROM_ARCH}-3.13
 
-# Add QEMU
-ARG QEMU_ARCH
-ENV QEMU_ARCH=${QEMU_ARCH:-x86_64}
-ADD https://github.com/multiarch/qemu-user-static/releases/download/v5.2.0-2/qemu-${QEMU_ARCH}-static /usr/bin
+COPY --from=builder qemu-$QEMU_ARCH-static /usr/bin
 
 ARG BUILDDATE
 ENV BUILDDATEENV=${BUILDDATE}
