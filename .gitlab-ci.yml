@@ -9,29 +9,26 @@ variables:
   IMAGE: registry.gitlab.com/bockiii/deemix-docker
   IMAGE_TAG: ng
   DOCKER_CLI_EXPERIMENTAL: enabled
+  PLATFORMS: "linux/amd64,linux/arm64,linux/arm/v7"
 
 before_script:
   - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
-  - apk add --update curl && rm -rf /var/cache/apk/*
+  - apk add --update curl jq && rm -rf /var/cache/apk/*
   - export CI_JOB_TIMESTAMP=$(date --utc -Iseconds)
 
 build:
   stage: build
   script:
-    - docker run --rm --privileged multiarch/qemu-user-static:register --reset
-    - docker build --pull -f Dockerfile --build-arg BUILDDATE=$CI_JOB_TIMESTAMP --build-arg FROM_ARCH=arm64v8 -t $IMAGE:arm64v8-${IMAGE_TAG} .
-    - docker build --pull -f Dockerfile --build-arg BUILDDATE=$CI_JOB_TIMESTAMP --build-arg FROM_ARCH=arm32v7 -t $IMAGE:arm32v7-${IMAGE_TAG} .
-    - docker build --pull --build-arg BUILDDATE=$CI_JOB_TIMESTAMP -t $IMAGE:amd64-${IMAGE_TAG} .
-    - docker push $IMAGE:arm64v8-${IMAGE_TAG}
-    - docker push $IMAGE:arm32v7-${IMAGE_TAG}
-    - docker push $IMAGE:amd64-${IMAGE_TAG}
-    - docker manifest create "$IMAGE:${IMAGE_TAG}"
-      "$IMAGE:amd64-${IMAGE_TAG}"
-      "$IMAGE:arm32v7-${IMAGE_TAG}"
-      "$IMAGE:arm64v8-${IMAGE_TAG}"
-    - docker manifest annotate "$IMAGE:${IMAGE_TAG}" "$IMAGE:arm32v7-${IMAGE_TAG}" --os=linux --arch=arm   --variant=v7
-    - docker manifest annotate "$IMAGE:${IMAGE_TAG}" "$IMAGE:arm64v8-${IMAGE_TAG}" --os=linux --arch=arm64 --variant=v8
-      # Push manifest to official registry
-    - docker manifest push "$IMAGE:${IMAGE_TAG}"
-      # Validate multi-arch manifest
-    - docker run --rm mplatform/mquery $IMAGE:${IMAGE_TAG}
+    # Download latest buildx bin from github
+    - mkdir -p ~/.docker/cli-plugins/
+    - BUILDX_LATEST_BIN_URI=$(curl -s -L https://github.com/docker/buildx/releases/latest | grep 'linux-amd64' | grep 'href' | sed 's/.*href="/https:\/\/github.com/g; s/amd64".*/amd64/g')
+    - curl -s -L ${BUILDX_LATEST_BIN_URI} -o ~/.docker/cli-plugins/docker-buildx
+    - chmod a+x ~/.docker/cli-plugins/docker-buildx
+    # Get and run the latest docker/binfmt tag to use its qemu parts
+    - BINFMT_IMAGE_TAG=$(curl -s https://registry.hub.docker.com/v2/repositories/docker/binfmt/tags | jq '.results | sort_by(.last_updated)[-1].name' -r)
+    - docker run --rm --privileged docker/binfmt:${BINFMT_IMAGE_TAG}
+    # create the multibuilder
+    - docker buildx create --name multibuilder
+    - docker buildx use multibuilder    
+    # build and push
+    - docker buildx build --platform "${PLATFORMS}" -t $IMAGE:${IMAGE_TAG} . --push
