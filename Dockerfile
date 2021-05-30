@@ -10,9 +10,10 @@ LABEL \
 	app.deemix.image.description="Docker image for Deemix" \
     maintainer="Bocki"
 
-RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash && \
-    chmod +x /root/.nvm/nvm.sh && \
-    /root/.nvm/nvm.sh install v16.2.0
+RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
+ENV NVM_DIR=/root/.nvm
+ENV NODE_VERSION=16.2.0
+RUN . $HOME/.nvm/nvm.sh && nvm install $NODE_VERSION && nvm alias default $NODE_VERSION && nvm use default
 
 RUN apt-get update && \
     apt-get install -y git
