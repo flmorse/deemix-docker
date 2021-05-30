@@ -10,6 +10,9 @@ LABEL \
 	app.deemix.image.description="Docker image for Deemix" \
     maintainer="Bocki"
 
+RUN apt-get update && \
+    apt-get install -y git
+
 RUN git clone https://gitlab.com/RemixDev/deemix-gui.git --recursive && \
     rm -R /config && \
     mkdir /deemix-gui/server/music && \
