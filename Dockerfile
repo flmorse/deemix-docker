@@ -13,7 +13,8 @@ LABEL \
 RUN curl -fsSL https://deb.nodesource.com/setup_16.x | bash && \
 	apt-get -y --no-install-recommends install >/dev/null \
 		nodejs \
-		yarn && \
+		yarn \
+    git && \
 	apt-get clean && \
   rm -rf /var/lib/apt/lists/*;
 
@@ -21,9 +22,6 @@ RUN curl -fsSL https://deb.nodesource.com/setup_16.x | bash && \
 #ENV NVM_DIR=/root/.nvm
 #ENV NODE_VERSION=16.2.0
 #RUN . $HOME/.nvm/nvm.sh && nvm install $NODE_VERSION && nvm alias default $NODE_VERSION && nvm use default
-
-RUN apt-get update && \
-    apt-get install -y git
 
 RUN git clone https://gitlab.com/RemixDev/deemix-gui.git --recursive && \
     rm -R /config && \
