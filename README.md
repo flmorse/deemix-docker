@@ -67,9 +67,9 @@ The container will look for a new update in the Deemix repo on every start and w
 
 `-e ARL=1234567`                        - OPTIONAL: If you want Deemix to automatically log in for everyone who opens the website, provide your ARL token via this Environment variable.
 
-`-e UMASK_SET=022                       - OPTIONAL: Setting UMASK for file permissions Default is 022
+`-e UMASK_SET=022`                       - OPTIONAL: Setting UMASK for file permissions Default is 022
 
-`-e DEEZUI=false                        - OPTIONAL: Setting DEEZUI to true will change your GUI to the legacy Deezloader UI.
+`-e DEEZUI=false`                        - OPTIONAL: Setting DEEZUI to true will change your GUI to the legacy Deezloader UI.
 
 `-p 6595:6595`                          - Port opened for the web interface.
 
