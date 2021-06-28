@@ -7,7 +7,7 @@ stages:
 
 variables:
   IMAGE: registry.gitlab.com/bockiii/deemix-docker
-  IMAGE_TAG: ng
+  IMAGE_TAG: latest
   DOCKER_CLI_EXPERIMENTAL: enabled
   PLATFORMS: "linux/amd64,linux/arm64,linux/arm/v7"
 
