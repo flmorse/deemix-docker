@@ -1,4 +1,7 @@
 # Changelog
+## 2021-06-28
+- Full rework of the latest by promoting the next gen version to current after the python version is permanently broken now
+- Aside from the serverwide-arl, everything should work for now. As soon as that feature is available in the source, I will update the container with that functionality again.
 ## 2021-05-30
 - Added next gen version of deemix as container variant
 ## 2021-04-12

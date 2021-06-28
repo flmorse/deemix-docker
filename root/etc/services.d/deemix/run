@@ -1,7 +1,5 @@
 #!/usr/bin/with-contenv bash
 
-#printf '%-50s %2s %-5s \n' "[services.d] Package Build Date" ":" "$(cat /deemix/packagedate)"
-
 UMASK_SET=${UMASK_SET:-022}
 umask "$UMASK_SET"
 
@@ -9,5 +7,12 @@ cd /deemix-gui/server
 
 HOME=/deem
 
+if [ ! -z ${INTPORT} ]; then
+	port=$INTPORT
+else
+	port=6595
+fi
+
+
 echo "[services.d] Starting Deemix"
-s6-setuidgid abc yarn start
+s6-setuidgid abc yarn start-build --host 0.0.0.0 --port $port
