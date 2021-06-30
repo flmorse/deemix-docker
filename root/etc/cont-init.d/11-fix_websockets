@@ -1,0 +1,11 @@
+#!/usr/bin/with-contenv bash
+
+# see if the environment variable for reverse proxy is set and then change the websocket to a secure websocket
+
+if [ ! -z ${REVERSEPROXY} ]; then
+	printf '[cont-init.d] Fixing Websocket for Reverse Proxy \n'
+    sed -i 's+ws://+wss://+g' /deemix-gui/webui/public/js/bundle.js
+    printf '[cont-init.d] Fixed Websocket for Reverse Proxy \n'
+else
+	printf '[cont-init.d] No Reverse Proxy enabled, keeping insecure websocket \n'
+fi

@@ -28,9 +28,9 @@ RUN git clone https://gitlab.com/RemixDev/deemix-gui.git --recursive && \
 	ln -sf /deemix-gui/server/music /downloads && \
 	ln -sf /deem/.config/deemix /config
 
-WORKDIR /deemix-gui/server
+WORKDIR /deemix-gui
 
-RUN yarn install
+RUN yarn install --prod
 
 COPY root/ /
 

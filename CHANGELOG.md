@@ -1,4 +1,6 @@
 # Changelog
+## 2021-06-30
+- Added Environment Variable "REVERSEPROXY" as a temporary fix until the websocket topic is fixed in the code
 ## 2021-06-28
 - Full rework of the latest by promoting the next gen version to current after the python version is permanently broken now
 - Aside from the serverwide-arl, everything should work for now. As soon as that feature is available in the source, I will update the container with that functionality again.
