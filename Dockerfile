@@ -30,7 +30,7 @@ RUN git clone https://gitlab.com/RemixDev/deemix-gui.git --recursive && \
 
 WORKDIR /deemix-gui
 
-RUN yarn install --prod
+RUN yarn install-all --prod
 
 COPY root/ /
 
