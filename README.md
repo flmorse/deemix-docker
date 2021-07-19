@@ -1,16 +1,3 @@
-# IMPORTANT - ISSUES WITH NEW ALPINE VERSION
-
-The new Alpine 3.13 has some known issues with docker hosts running a Debian Buster (only 32bit versions) based distribution (like Raspberry PI OS).
-
-See this link for more information and also a workaround: https://docs.linuxserver.io/faq#libseccomp
-
-I have successfully used option 3.
-
-# IMPORTANT - Temporary Reverse Proxy fix
-
-If you use a reverse proxy like traefik or nginx, create an environment Variable called "REVERSEPROXY" and set it to "true".
-Until it is fixed, you will have to choose to either have Deemix available through Reverse Proxy or not.
-
 # deemix-docker
 
 Deemix in a Docker container.
@@ -63,7 +50,6 @@ Pull the latest container for the latest Deemix version
 | `-e PUID=1000` | OPTIONAL: User ID of the user you want the container to run as in order to fix folder permission issues |
 | `-e PGID=1000` | OPTIONAL: Group ID, see PUID |
 | `-e UMASK_SET=022` | OPTIONAL: Setting UMASK for file permissions Default is 022 |
-| `-e REVERSEPROXY=true` | OPTIONAL: Set this if you want to use Deemix behind traefik/nginx. Read the note. |
 | `-p 6595:6595` | Port opened for the web interface |
 | `-e INTPORT=3333` | EXTRA OPTIONAL: This changes the internal port of deemix. DON'T CHANGE THIS IF YOU DONT KNOW WHY YOU WOULD DO IT |
 | `registry.gitlab.com/bockiii/deemix-docker` | This container |

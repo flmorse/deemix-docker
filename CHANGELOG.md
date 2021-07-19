@@ -1,4 +1,6 @@
 # Changelog
+## 2021-07-09
+- Removed Environment Variable "REVERSEPROXY" again since the original issue was fixed in the webui source. Reverse proxying should now just work by default.
 ## 2021-06-30
 - Added Environment Variable "REVERSEPROXY" as a temporary fix until the websocket topic is fixed in the code
 ## 2021-06-28
