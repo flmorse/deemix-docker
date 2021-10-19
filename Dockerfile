@@ -30,8 +30,8 @@ RUN git clone https://gitlab.com/RemixDev/deemix-gui.git --recursive && \
 
 WORKDIR /deemix-gui
 
-RUN yarn install --prod && \
-	yarn --cwd server install --prod
+RUN yarn install --prod --network-timeout 1000000 && \
+	yarn --cwd server install --prod --network-timeout 1000000
 
 COPY root/ /
 
