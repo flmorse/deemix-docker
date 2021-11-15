@@ -74,4 +74,6 @@ Gitlab link for this container: https://gitlab.com/Bockiii/deemix-docker
 
 Issue Tracker for this Docker: https://gitlab.com/Bockiii/deemix-docker/-/issues
 
+You can donate/buy me a coffe on Ko-Fi: https://ko-fi.com/bocki
+
 Feel free to open an issue that is Docker related, and not related to Deemix development. Go to the Deemix repository for that.
