@@ -1,3 +1,22 @@
+FROM lsiobase/ubuntu:focal as builder
+
+RUN curl -fsSL https://deb.nodesource.com/setup_16.x | bash && \
+	apt-get -y --no-install-recommends install >/dev/null \
+		nodejs \
+		git && \
+	npm install --global yarn
+
+RUN git clone https://gitlab.com/RemixDev/deemix-gui.git --recursive
+
+WORKDIR /deemix-gui
+
+RUN yarn config set network-timeout 1000000 -g && \
+	yarn install-all && \
+	yarn build-server && \
+	yarn build-webui && \
+	yarn cache clean && \
+	find . -name 'node_modules' -type d -prune -exec rm -rf '{}' \;
+
 FROM lsiobase/ubuntu:focal
 
 ARG BUILDDATE
@@ -10,19 +29,19 @@ LABEL \
 	app.deemix.image.description="Docker image for Deemix" \
 	maintainer="Bocki"
 
+COPY --from=builder /deemix-gui /deemix-gui
+
 RUN curl -fsSL https://deb.nodesource.com/setup_16.x | bash && \
 	apt-get -y --no-install-recommends install >/dev/null \
 		nodejs \
 		jq \
 		iputils-ping \
-		curl \
-		git && \
+		curl && \
 	apt-get clean && \
 	rm -rf /var/lib/apt/lists/* && \
 	npm install --global yarn
 
-RUN git clone https://gitlab.com/RemixDev/deemix-gui.git --recursive && \
-	rm -R /config && \
+RUN rm -R /config && \
 	mkdir /deemix-gui/server/music && \
 	mkdir -p /deem/.config/deemix && \
 	ln -sf /deemix-gui/server/music /downloads && \
@@ -30,9 +49,13 @@ RUN git clone https://gitlab.com/RemixDev/deemix-gui.git --recursive && \
 
 WORKDIR /deemix-gui
 
-RUN yarn install --prod --network-timeout 1000000 && \
-	yarn --cwd server install --prod --network-timeout 1000000 && \
-	yarn cache clean	
+RUN yarn config set network-timeout 1000000 -g && \
+	yarn install --prod && \
+	yarn --cwd server install --prod && \
+	yarn cache clean
+
+
+WORKDIR /deemix-gui
 
 COPY root/ /
 
