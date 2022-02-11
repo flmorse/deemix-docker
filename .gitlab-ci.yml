@@ -39,6 +39,9 @@ build-deemix:
     #- |
     #  curl --header "JOB-TOKEN: ${CI_JOB_TOKEN}" --upload-file ${ZIP_NAME}.zip ${PACKAGE_REGISTRY_URL}/${ZIP_NAME}.zip
     #- echo ${PACKAGE_REGISTRY_URL}/${ZIP_NAME}.zip #This for download URL dockerfile
+  only:
+    refs:
+      - CI-test
   artifacts:
     paths:
       - deemix-gui/
@@ -72,6 +75,9 @@ build-binary:
     - docker buildx build --build-arg PACKAGE_REGISTRY_URL=${PACKAGE_REGISTRY_URL} --build-arg JOB_TOKEN=${CI_JOB_TOKEN} --platform "${PLATFORMS}" . -f Dockerfile.binary
     # Also can do using date, so we dont dependant on latest, in case application break again.
     #- docker buildx build --platform "${PLATFORMS}" -t ${CI_REGISTRY_IMAGE}:${DATE} -t $CI_REGISTRY_IMAGE:${IMAGE_TAG} . --push
+  only:
+    refs:
+      - CI-test
 
 
 create-release:
@@ -84,6 +90,9 @@ create-release:
     - |
       release-cli create --name "Release $DATE" --tag-name $CI_COMMIT_SHA \
         --assets-link "{\"name\":\"${ZIP_NAME}.zip\",\"url\":\"${PACKAGE_REGISTRY_URL}/${ZIP_NAME}.zip\"}"
+  only:
+    refs:
+      - CI-test
 
 build-docker-image:
   image: docker:19
@@ -113,3 +122,6 @@ build-docker-image:
     - docker buildx build --platform "${PLATFORMS}" -t ${CI_REGISTRY_IMAGE}:${IMAGE_TAG_TEST} . --push
     # Also can do using date, so we dont dependant on latest, in case application break again.
     #- docker buildx build --platform "${PLATFORMS}" -t ${CI_REGISTRY_IMAGE}:${DATE} -t $CI_REGISTRY_IMAGE:${IMAGE_TAG} . --push
+  only:
+    refs:
+      - CI-test
