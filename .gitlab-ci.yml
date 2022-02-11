@@ -19,23 +19,10 @@ fetch-deemix:
   stage: fetch-deemix
   script:
     - apt update && apt install -y --no-install-recommends zip git curl
-    # Can replace with SHA-COMMIT
-#    - export DATE=$(date +%Y%m%d)
-    #- apk add --no-cache zip git curl
-#    - git clone --depth=1 https://gitlab.com/RemixDev/deemix-gui.git --recursive
-#    - cd deemix-gui
-#    - yarn config set network-timeout 1000000 -g
+    - git clone --depth=1 https://gitlab.com/RemixDev/deemix-gui.git --recursive
+    - cd deemix-gui
+    - yarn config set network-timeout 1000000 -g
     - yarn install-all
-#    - yarn predist
-    #- yarn --cwd server install --prod && yarn build-server && rm -rf server/node_modules
-    #- yarn --cwd webui install --prod && yarn build-webui && rm -rf webui/node_modules
-    #- yarn cache clean
-    #- find . -name 'node_modules' -type d -prune -exec rm -rf '{}' \;
-    # Move out our needed to new dir 
-    #- cd .. && mkdir deemix-docker
-    #- cp -r deemix-gui/server deemix-docker/server
-    #- cp -r deemix-gui/webui deemix-docker/webui
-    #- cp deemix-gui/package.json deemix-docker/package.json
     #- zip -9 -r ${ZIP_NAME}.zip deemix-docker
     #- |
     #  curl --header "JOB-TOKEN: ${CI_JOB_TOKEN}" --upload-file ${ZIP_NAME}.zip ${PACKAGE_REGISTRY_URL}/${ZIP_NAME}.zip
