@@ -6,18 +6,20 @@ RUN apk add --no-cache curl git && echo $TARGETARCH
 COPY deemix-gui deemix-gui
 WORKDIR deemix-gui/
 # Only install pkg
-RUN ls-al && yarn config set network-timeout 1000000 -g && yarn add pkg@latest
-#RUN if [ "${TARGETARCH}" = "arm64" ]; then \
-#        yarn install && yarn set-version && ./node_modules/.bin/pkg -t arm64 --out-dir dist ./server/package.json && yarn reset-version && ls -al dist/; \
-#    fi;
+RUN ls -al webui && \
+    ls -al server && \
+    yarn config set network-timeout 1000000 -g && yarn add pkg@latest
+RUN if [ "${TARGETARCH}" = "arm64" ]; then \
+        yarn install && yarn set-version && ./node_modules/.bin/pkg -t arm64 --out-dir dist ./server/package.json && yarn reset-version && ls -al dist/; \
+    fi;
 
 RUN if [ "${TARGETARCH}" = "amd64" ]; then \
         yarn install && yarn set-version && ./node_modules/.bin/pkg -t x64 --out-dir dist ./server/package.json && yarn reset-version && ls -al dist/; \
     fi;
 
-#RUN if [ "${TARGETARCH}" = "arm" ]; then \
-#        yarn install && yarn set-version && ./node_modules/.bin/pkg -t armv7 --out-dir dist ./server/package.json && yarn reset-version && ls -al dist/; \
-#    fi;
+RUN if [ "${TARGETARCH}" = "arm" ]; then \
+        yarn install && yarn set-version && ./node_modules/.bin/pkg -t armv7 --out-dir dist ./server/package.json && yarn reset-version && ls -al dist/; \
+    fi;
 
 #RUN yarn install && yarn set-version && ./node_modules/.bin/pkg --out-dir dist ./server/package.json && yarn reset-version && ls -al dist/
-RUN curl --header "JOB-TOKEN: ${JOB_TOKEN}" --upload-file dist/deemix-server ${PACKAGE_REGISTRY_URL}/deemix-server-linux-$TARGETARCH
+RUN chmod +x dist/deemix-server && curl --header "JOB-TOKEN: ${JOB_TOKEN}" --upload-file dist/deemix-server ${PACKAGE_REGISTRY_URL}/deemix-server-linux-$TARGETARCH
