@@ -1,5 +1,8 @@
-FROM lsiobase/ubuntu:focal
-
+FROM lsiobase/alpine:3.15
+#Add addiitional packages
+RUN apk add --no-cache curl
+ARG TARGETARCH
+ARG STATIC_URL
 ARG BUILDDATE
 ENV BUILDDATEENV=${BUILDDATE}
 
@@ -10,19 +13,11 @@ LABEL \
     app.deemix.image.description="Docker image for Deemix" \
     maintainer="Bocki"
 
-RUN curl -fsSL https://deb.nodesource.com/setup_16.x | bash && \
-    apt-get -y --no-install-recommends install >/dev/null \
-        nodejs \
-        jq \
-        iputils-ping \
-        unzip \
-        curl && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/* && \
-    mkdir /downloads
+#RUN curl -L -o deemix.zip http://gitlab.com/Bockiii/deemix-src/-/jobs/artifacts/master/download?job=dl_src && \
+#    unzip deemix
 
-RUN curl -L -o deemix.zip http://gitlab.com/Bockiii/deemix-src/-/jobs/artifacts/master/download?job=dl_src && \
-    unzip deemix
+# Need look again in project num
+RUN curl -L $STATIC_URL/deemix-server-linux-$TARGETARCH -o deemix-server
 
 COPY root/ /
 

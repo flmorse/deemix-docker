@@ -8,6 +8,8 @@ chown -R abc:abc /config
 # find all folders in the download folder and own them to the container user. This will not change files but should run quicker on big collections.
 find /downloads -type d -exec chown abc:abc {} +
 
+# add executability to server
+chmod +x /deemix-server
 
 # Fix misconfigured download locations. The container's download map is always /downloads.
 if [ -f "/config/config.json" ]; then
