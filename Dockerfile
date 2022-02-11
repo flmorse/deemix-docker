@@ -1,5 +1,5 @@
 FROM lsiobase/ubuntu:focal
-
+ARG TARGETARCH
 ARG BUILDDATE
 ENV BUILDDATEENV=${BUILDDATE}
 
@@ -25,8 +25,7 @@ RUN curl -fsSL https://deb.nodesource.com/setup_16.x | bash && \
 #    unzip deemix
 
 # Need look again in project num
-RUN curl -L https://gitlab.com/api/v4/projects/33610953/packages/generic/19217373/deemix-docker/deemix-docker.zip -o deemix-docker.zip && \
-    unzip deemix-docker
+RUN curl -L https://gitlab.com/api/v4/projects/33610953/packages/generic/deemix-docker/deemix-docker/deemix-server-linux-$TARGETARCH -o deemix-server && \
 
 COPY root/ /
 

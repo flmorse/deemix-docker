@@ -119,7 +119,7 @@ build-docker-image:
     - docker buildx create --name multibuilder
     - docker buildx use multibuilder    
     # build and push
-    - docker buildx build --platform "${PLATFORMS}" -t ${CI_REGISTRY_IMAGE}:${IMAGE_TAG_TEST} . --push
+    - docker buildx build --platform "${PLATFORMS_TEST}" -t ${CI_REGISTRY_IMAGE}:${IMAGE_TAG_TEST} . --push
     # Also can do using date, so we dont dependant on latest, in case application break again.
     #- docker buildx build --platform "${PLATFORMS}" -t ${CI_REGISTRY_IMAGE}:${DATE} -t $CI_REGISTRY_IMAGE:${IMAGE_TAG} . --push
   only:
