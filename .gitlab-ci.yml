@@ -88,8 +88,8 @@ create-release:
     - export DATE=$(date +%Y%m%d) #Cant tag same twice use $CI_COMMIT_SHA for a while
     - |
       release-cli create --name "Release $DATE" --tag-name $CI_COMMIT_SHA \
-        --assets-link "{\"name\":\"deemix-server-amd64\",\"url\":\"${PACKAGE_REGISTRY_URL}/deemix-server-amd64\"}" \
-        --assets-link "{\"name\":\"deemix-server-arm64\",\"url\":\"${PACKAGE_REGISTRY_URL}/deemix-server-arm64\"}"
+        --assets-link "{\"name\":\"deemix-server-amd64\",\"url\":\"${PACKAGE_REGISTRY_URL}/deemix-server-linux-amd64\"}" \
+        --assets-link "{\"name\":\"deemix-server-arm64\",\"url\":\"${PACKAGE_REGISTRY_URL}/deemix-server-linux-arm64\"}"
   only:
     refs:
       - CI-test
