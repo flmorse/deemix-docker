@@ -15,7 +15,7 @@ RUN if [ "${TARGETARCH}" = "arm64" ]; then \
 
 RUN if [ "${TARGETARCH}" = "amd64" ]; then \
         #yarn install && yarn set-version && ./node_modules/.bin/pkg -t x64 --out-dir dist ./server/package.json && yarn reset-version && ls -al dist/; \
-        yarn dist-server; \
+        yarn dist-server && ls -al dist/; \
     fi;
 
 RUN if [ "${TARGETARCH}" = "arm" ]; then \
