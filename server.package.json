@@ -22,9 +22,9 @@
 			"../package.json"
 		],
 		"targets": [
-			"node16.4.1-linuxstatic-x64",
-			"node16.4.1-linuxstatic-arm64",
-			"node16.4.1-linuxstatic-armv7"
+			"node16-linuxstatic-x64",
+			"node16-linuxstatic-arm64",
+			"node16-linuxstatic-armv7"
 		]
 	},
 	"dependencies": {
