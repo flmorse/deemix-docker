@@ -8,6 +8,7 @@ variables:
 
 stages:
   - build-deemix
+  - build-binary
   - create-release
   - build-docker-image
 
@@ -23,22 +24,55 @@ build-deemix:
     - git clone --depth=1 https://gitlab.com/RemixDev/deemix-gui.git --recursive
     - cd deemix-gui
     - yarn config set network-timeout 1000000 -g
-    - yarn --cwd server install --prod && yarn build-server && rm -rf server/node_modules
-    - yarn --cwd webui install --prod && yarn build-webui && rm -rf webui/node_modules
+    - yarn install-all
+    - yarn predist
+    #- yarn --cwd server install --prod && yarn build-server && rm -rf server/node_modules
+    #- yarn --cwd webui install --prod && yarn build-webui && rm -rf webui/node_modules
     #- yarn cache clean
     #- find . -name 'node_modules' -type d -prune -exec rm -rf '{}' \;
     # Move out our needed to new dir 
-    - cd .. && mkdir deemix-docker
-    - cp -r deemix-gui/server deemix-docker/server
-    - cp -r deemix-gui/webui deemix-docker/webui
-    - cp deemix-gui/package.json deemix-docker/package.json
-    - zip -9 -r ${ZIP_NAME}.zip deemix-docker
-    - |
-      curl --header "JOB-TOKEN: ${CI_JOB_TOKEN}" --upload-file ${ZIP_NAME}.zip ${PACKAGE_REGISTRY_URL}/${ZIP_NAME}.zip
-    - echo ${PACKAGE_REGISTRY_URL}/${ZIP_NAME}.zip #This for download URL dockerfile
+    #- cd .. && mkdir deemix-docker
+    #- cp -r deemix-gui/server deemix-docker/server
+    #- cp -r deemix-gui/webui deemix-docker/webui
+    #- cp deemix-gui/package.json deemix-docker/package.json
+    #- zip -9 -r ${ZIP_NAME}.zip deemix-docker
+    #- |
+    #  curl --header "JOB-TOKEN: ${CI_JOB_TOKEN}" --upload-file ${ZIP_NAME}.zip ${PACKAGE_REGISTRY_URL}/${ZIP_NAME}.zip
+    #- echo ${PACKAGE_REGISTRY_URL}/${ZIP_NAME}.zip #This for download URL dockerfile
   artifacts:
     paths:
-      - deemix-docker/
+      - deemix-gui/
+
+
+build-binary:
+  image: docker:19
+  #dependencies:
+  #  - build-deemix
+  stage: build-binary
+  services:
+    - docker:dind
+  before_script:
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
+    - apk add --update curl jq && rm -rf /var/cache/apk/*
+    - export CI_JOB_TIMESTAMP=$(date --utc -Iseconds)
+    - export DATE=$(date +%Y%m%d)
+  script:
+    # Download latest buildx bin from github
+    - mkdir -p ~/.docker/cli-plugins/
+    - BUILDX_LATEST_BIN_URI=$(curl -s -L https://github.com/docker/buildx/releases/latest | grep 'linux-amd64' | grep 'href' | sed 's/.*href="/https:\/\/github.com/g; s/amd64".*/amd64/g')
+    - curl -s -L ${BUILDX_LATEST_BIN_URI} -o ~/.docker/cli-plugins/docker-buildx
+    - chmod a+x ~/.docker/cli-plugins/docker-buildx
+    # Get and run the latest docker/binfmt tag to use its qemu parts
+    - BINFMT_IMAGE_TAG=$(curl -s https://registry.hub.docker.com/v2/repositories/docker/binfmt/tags | jq '.results | sort_by(.last_updated)[-1].name' -r)
+    - docker run --rm --privileged docker/binfmt:${BINFMT_IMAGE_TAG}
+    # create the multibuilder
+    - docker buildx create --name multibuilder
+    - docker buildx use multibuilder    
+    # build and push
+    - docker buildx build --build-arg PACKAGE_REGISTRY_URL=${PACKAGE_REGISTRY_URL} --build-arg JOB_TOKEN=${CI_JOB_TOKEN} --platform "${PLATFORMS}" . -f Dockerfile.binary
+    # Also can do using date, so we dont dependant on latest, in case application break again.
+    #- docker buildx build --platform "${PLATFORMS}" -t ${CI_REGISTRY_IMAGE}:${DATE} -t $CI_REGISTRY_IMAGE:${IMAGE_TAG} . --push
+
 
 create-release:
   stage: create-release
