@@ -23,7 +23,7 @@ build-deemix:
     - git clone --depth=1 https://gitlab.com/RemixDev/deemix-gui.git --recursive
     - cd deemix-gui
     - yarn config set network-timeout 1000000 -g
-    - yarn --cwd server install --prod && build-server && rm -rf server/node_modules
+    - yarn --cwd server install --prod && yarn build-server && rm -rf server/node_modules
     - yarn --cwd webui install --prod && yarn build-webui && rm -rf webui/node_modules
     #- yarn cache clean
     #- find . -name 'node_modules' -type d -prune -exec rm -rf '{}' \;
