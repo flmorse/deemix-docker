@@ -19,7 +19,7 @@ build-deemix:
     #- apt update && apt install -y --no-install-recommends zip
     # Can replace with SHA-COMMIT
     - export DATE=$(date +%Y%m%d)
-    - apk add --no-cache zip
+    - apk add --no-cache zip git
     - git clone --depth=1 https://gitlab.com/RemixDev/deemix-gui.git --recursive
     - cd deemix-gui
     - yarn config set network-timeout 1000000 -g
