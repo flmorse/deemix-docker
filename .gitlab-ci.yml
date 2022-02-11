@@ -36,6 +36,7 @@ build-deemix:
       curl --header "JOB-TOKEN: ${CI_JOB_TOKEN}" --upload-file ${ZIP_NAME}.zip ${PACKAGE_REGISTRY_URL}/${ZIP_NAME}.zip
     - |
       curl --header "JOB-TOKEN: ${CI_JOB_TOKEN}" --upload-file ${ZIP_NAME}.zip ${PACKAGE_REGISTRY_URL}/${ZIP_NAME}-${DATE}.zip
+    - echo ${PACKAGE_REGISTRY_URL}/${ZIP_NAME}.zip #This for download URL dockerfile
   artifacts:
     paths:
       - deemix-docker/
