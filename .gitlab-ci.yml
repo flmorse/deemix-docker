@@ -28,7 +28,7 @@ build-deemix:
     #- yarn cache clean
     #- find . -name 'node_modules' -type d -prune -exec rm -rf '{}' \;
     # Move out our needed to new dir 
-    - mkdir deemix-docker
+    - cd .. && mkdir deemix-docker
     - cp -r deemix-gui/server deemix-docker/server
     - cp -r deemix-gui/webui deemix-docker/webui
     - cp deemix-gui/package.json deemix-docker/package.json
