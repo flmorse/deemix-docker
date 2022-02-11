@@ -50,8 +50,6 @@ build-deemix:
 
 build-binary:
   image: docker:19
-  #dependencies:
-  #  - build-deemix
   stage: build-binary
   services:
     - docker:dind
