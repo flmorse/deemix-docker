@@ -32,9 +32,9 @@ build-deemix:
       curl --header "JOB-TOKEN: ${CI_JOB_TOKEN}" --upload-file dist/deemix-server-arm64 ${PACKAGE_REGISTRY_URL}/deemix-server-linux-arm64
   only:
     refs:
-      - CI-test
-    #changes:
-    #  - server.package.json
+      - master
+    changes:
+      - server.package.json
   #artifacts:
   #  paths:
   #    - deemix-gui/
