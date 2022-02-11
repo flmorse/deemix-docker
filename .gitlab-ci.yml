@@ -49,7 +49,6 @@ create-release:
   #  - if: $CI_COMMIT_SHA
   script:
     - export DATE=$(date +%Y%m%d) #Cant tag same twice use $CI_COMMIT_SHA for a while
-    - export PACKAGE_REGISTRY_URL="${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/${DATE}/${CI_PROJECT_NAME}"
     - |
       release-cli create --name "Release $DATE" --tag-name $CI_COMMIT_SHA \
         --assets-link "{\"name\":\"${ZIP_NAME}.zip\",\"url\":\"${PACKAGE_REGISTRY_URL}/${ZIP_NAME}.zip\"}"\        
