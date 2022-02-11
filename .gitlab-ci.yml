@@ -33,6 +33,8 @@ build-deemix:
   only:
     refs:
       - CI-test
+    changes:
+      - server.package.json
   #artifacts:
   #  paths:
   #    - deemix-gui/
