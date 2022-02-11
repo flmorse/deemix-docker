@@ -19,7 +19,7 @@ build-deemix:
     #- apt update && apt install -y --no-install-recommends zip
     # Can replace with SHA-COMMIT
     - export DATE=$(date +%Y%m%d)
-    - apk add --no-cache zip git
+    - apk add --no-cache zip git curl
     - git clone --depth=1 https://gitlab.com/RemixDev/deemix-gui.git --recursive
     - cd deemix-gui
     - yarn config set network-timeout 1000000 -g
@@ -32,7 +32,7 @@ build-deemix:
     - cp -r deemix-gui/server deemix-docker/server
     - cp -r deemix-gui/webui deemix-docker/webui
     - cp deemix-gui/package.json deemix-docker/package.json
-    - zip -9 -r 
+    - zip -9 -r ${ZIP_NAME}.zip deemix-docker
     - |
       curl --header "JOB-TOKEN: ${CI_JOB_TOKEN}" --upload-file ${ZIP_NAME}.zip ${PACKAGE_REGISTRY_URL}/${ZIP_NAME}.zip
     - |
