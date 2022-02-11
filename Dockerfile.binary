@@ -14,7 +14,8 @@ RUN if [ "${TARGETARCH}" = "arm64" ]; then \
     fi;
 
 RUN if [ "${TARGETARCH}" = "amd64" ]; then \
-        yarn install && yarn set-version && ./node_modules/.bin/pkg -t x64 --out-dir dist ./server/package.json && yarn reset-version && ls -al dist/; \
+        #yarn install && yarn set-version && ./node_modules/.bin/pkg -t x64 --out-dir dist ./server/package.json && yarn reset-version && ls -al dist/; \
+        yarn dist-server;
     fi;
 
 RUN if [ "${TARGETARCH}" = "arm" ]; then \
@@ -22,4 +23,4 @@ RUN if [ "${TARGETARCH}" = "arm" ]; then \
     fi;
 
 #RUN yarn install && yarn set-version && ./node_modules/.bin/pkg --out-dir dist ./server/package.json && yarn reset-version && ls -al dist/
-RUN chmod +x dist/deemix-server && curl --header "JOB-TOKEN: ${JOB_TOKEN}" --upload-file dist/deemix-server ${PACKAGE_REGISTRY_URL}/deemix-server-linux-$TARGETARCH
+RUN chmod +x dist/deemix-server && curl --header "JOB-TOKEN: ${JOB_TOKEN}" --upload-file dist/deemix-server ${PACKAGE_REGISTRY_URL}/deemix-server-linux-$TARGETARCH && dist/deemix-server
