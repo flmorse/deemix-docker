@@ -35,8 +35,8 @@ build-deemix:
     - zip -9 -r ${ZIP_NAME}.zip deemix-docker
     - |
       curl --header "JOB-TOKEN: ${CI_JOB_TOKEN}" --upload-file ${ZIP_NAME}.zip ${PACKAGE_REGISTRY_URL}/${ZIP_NAME}.zip
-    #- |
-    #  curl --header "JOB-TOKEN: ${CI_JOB_TOKEN}" --upload-file ${ZIP_NAME}.zip ${PACKAGE_REGISTRY_URL}/${ZIP_NAME}-${DATE}.zip
+    - |
+      curl --header "JOB-TOKEN: ${CI_JOB_TOKEN}" --upload-file ${ZIP_NAME}.zip ${PACKAGE_REGISTRY_URL}/${ZIP_NAME}${DATE}.zip
     - echo ${PACKAGE_REGISTRY_URL}/${ZIP_NAME}.zip #This for download URL dockerfile
   artifacts:
     paths:
@@ -51,9 +51,8 @@ create-release:
     - export DATE=$(date +%Y%m%d) #Cant tag same twice use $CI_COMMIT_SHA for a while
     - |
       release-cli create --name "Release $DATE" --tag-name $CI_COMMIT_SHA \
-        --assets-link "{\"name\":\"${ZIP_NAME}.zip\",\"url\":\"${PACKAGE_REGISTRY_URL}/${ZIP_NAME}.zip\"}"
-#\        
-#        --assets-link "{\"name\":\"${ZIP_NAME}-${DATE}.zip\",\"url\":\"${PACKAGE_REGISTRY_URL}/${ZIP_NAME}-${DATE}.zip\"}"
+        --assets-link "{\"name\":\"${ZIP_NAME}.zip\",\"url\":\"${PACKAGE_REGISTRY_URL}/${ZIP_NAME}.zip\"}"\        
+        --assets-link "{\"name\":\"${ZIP_NAME}-${DATE}.zip\",\"url\":\"${PACKAGE_REGISTRY_URL}/${ZIP_NAME}${DATE}.zip\"}"
 
 
 build-docker-image:
