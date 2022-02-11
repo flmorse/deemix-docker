@@ -14,9 +14,9 @@ stages:
   - create-release
   - build-docker-image
 
-fetch-deemix:
+build-deemix:
   image: node:16
-  stage: fetch-deemix
+  stage: build-deemix
   script:
     - apt update && apt install -y --no-install-recommends zip git curl
     - git clone --depth=1 https://gitlab.com/RemixDev/deemix-gui.git --recursive
