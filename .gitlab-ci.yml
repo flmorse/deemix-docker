@@ -8,25 +8,25 @@ variables:
   ZIP_NAME: "deemix-docker"
 
 stages:
-  - build-deemix
+  #- build-deemix
   - build-binary
   - create-release
   - build-docker-image
 
-build-deemix:
-  image: node:16
+#build-deemix:
+#  image: node:16
   #image: node:16
-  stage: build-deemix
-  script:
-    - apt update && apt install -y --no-install-recommends zip git curl
+#  stage: build-deemix
+#  script:
+#    - apt update && apt install -y --no-install-recommends zip git curl
     # Can replace with SHA-COMMIT
-    - export DATE=$(date +%Y%m%d)
+#    - export DATE=$(date +%Y%m%d)
     #- apk add --no-cache zip git curl
-    - git clone --depth=1 https://gitlab.com/RemixDev/deemix-gui.git --recursive
-    - cd deemix-gui
-    - yarn config set network-timeout 1000000 -g
-    - yarn install-all
-    - yarn predist
+#    - git clone --depth=1 https://gitlab.com/RemixDev/deemix-gui.git --recursive
+#    - cd deemix-gui
+#    - yarn config set network-timeout 1000000 -g
+#    - yarn install-all
+#    - yarn predist
     #- yarn --cwd server install --prod && yarn build-server && rm -rf server/node_modules
     #- yarn --cwd webui install --prod && yarn build-webui && rm -rf webui/node_modules
     #- yarn cache clean
@@ -40,12 +40,12 @@ build-deemix:
     #- |
     #  curl --header "JOB-TOKEN: ${CI_JOB_TOKEN}" --upload-file ${ZIP_NAME}.zip ${PACKAGE_REGISTRY_URL}/${ZIP_NAME}.zip
     #- echo ${PACKAGE_REGISTRY_URL}/${ZIP_NAME}.zip #This for download URL dockerfile
-  only:
-    refs:
-      - CI-test
-  artifacts:
-    paths:
-      - deemix-gui/
+#  only:
+#    refs:
+#      - CI-test
+#  artifacts:
+#    paths:
+#      - deemix-gui/
 
 
 build-binary:
