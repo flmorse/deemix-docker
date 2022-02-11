@@ -2,7 +2,7 @@ FROM node:16-alpine
 ARG PACKAGE_REGISTRY_URL
 ARG TARGETARCH
 ARG CI_JOB_TOKEN
-RUN apk add --no-cache curl && echo $TARGETARCH
+RUN apk add --no-cache curl git && echo $TARGETARCH
 COPY deemix-gui deemix-gui
 WORKDIR deemix-gui/
 RUN yarn install && yarn set-version && ./node_modules/.bin/pkg --out-dir dist ./server/package.json && yarn reset-version && ls -al dist/
