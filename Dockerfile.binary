@@ -5,7 +5,8 @@ ARG JOB_TOKEN
 RUN apk add --no-cache curl git && echo $TARGETARCH
 COPY deemix-gui deemix-gui
 WORKDIR deemix-gui/
-# Upgrade pk outself
+# Upgrade pkg outself
+RUN yarn config set network-timeout 1000000 -g
 RUN npm -g install pkg@latest
 RUN if [ "${TARGETARCH}" = "arm64" ]; then \
         yarn install && yarn set-version && ./node_modules/.bin/pkg -t arm64 --out-dir dist ./server/package.json && yarn reset-version && ls -al dist/; \
