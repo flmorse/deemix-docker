@@ -26,6 +26,5 @@ RUN ls -al webui && \
 #    fi;
 
 #RUN yarn install && yarn set-version && ./node_modules/.bin/pkg --out-dir dist ./server/package.json && yarn reset-version && ls -al dist/
-RUN yarn dist-server && ls -al dist/ && chmod +x dist/deemix-server*
-RUN curl --header "JOB-TOKEN: ${JOB_TOKEN}" --upload-file dist/deemix-server-linux ${PACKAGE_REGISTRY_URL}/deemix-server-linux-$TARGETARCH
-RUN curl --header "JOB-TOKEN: ${JOB_TOKEN}" --upload-file dist/deemix-server-arm64 ${PACKAGE_REGISTRY_URL}/deemix-server-linux-$TARGETARCH
+RUN yarn dist-server && ls -al dist/ && curl --header "JOB-TOKEN: ${JOB_TOKEN}" --upload-file dist/deemix-server-linux ${PACKAGE_REGISTRY_URL}/deemix-server-linux-$TARGETARCH && \
+    curl --header "JOB-TOKEN: ${JOB_TOKEN}" --upload-file dist/deemix-server-arm64 ${PACKAGE_REGISTRY_URL}/deemix-server-linux-$TARGETARCH
