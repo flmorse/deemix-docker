@@ -24,7 +24,9 @@ RUN curl -fsSL https://deb.nodesource.com/setup_16.x | bash && \
 #RUN curl -L -o deemix.zip http://gitlab.com/Bockiii/deemix-src/-/jobs/artifacts/master/download?job=dl_src && \
 #    unzip deemix
 
- curl -L https://gitlab.com/api/v4/projects/47/packages/generic//pigallery2/pigallery2.zip -o deemix-docker.zip
+# Need look again in CI ## project num
+RUN curl -L https://gitlab.com/api/v4/projects/##/packages/generic//deemix-docker/deemix-docker.zip -o deemix-docker.zip && \
+    unzip deemix-docker
 
 COPY root/ /
 
