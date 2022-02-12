@@ -5,7 +5,8 @@ printf '[cont-init.d] Fixing Folder Permissions\n'
 
 chown -R abc:abc /config
 chown -R abc:abc /downloads
-
+# Fixing /deemix-server binary losing execute permission
+chmod +x /deemix-server
 
 # Fix misconfigured download locations. The container's download map is always /downloads.
 if [ -f "/config/config.json" ]; then
