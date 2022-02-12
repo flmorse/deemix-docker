@@ -82,6 +82,8 @@ build-docker-image:
     - export DATE=$(date +%Y%m%d)
   script:
     # Download latest buildx bin from github
+    - export DATE=$(date +%Y%m%d) 
+    #Format 20220212
     - mkdir -p ~/.docker/cli-plugins/
     - BUILDX_LATEST_BIN_URI=$(curl -s -L https://github.com/docker/buildx/releases/latest | grep 'linux-amd64' | grep 'href' | sed 's/.*href="/https:\/\/github.com/g; s/amd64".*/amd64/g')
     - curl -s -L ${BUILDX_LATEST_BIN_URI} -o ~/.docker/cli-plugins/docker-buildx
@@ -93,7 +95,7 @@ build-docker-image:
     - docker buildx create --name multibuilder
     - docker buildx use multibuilder
     # build and push, still need fix download url in dockerfile
-    - docker buildx build --platform "${PLATFORMS}" -t ${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHORT_SHA} -t ${CI_REGISTRY_IMAGE} . --push
+    - docker buildx build --platform "${PLATFORMS}" --build-arg BUILDDATE=$DATE -t ${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHORT_SHA} -t ${CI_REGISTRY_IMAGE} . --push
     # Also can do using date, so we dont dependant on latest, in case application break again.
     #- docker buildx build --platform "${PLATFORMS}" -t ${CI_REGISTRY_IMAGE}:${DATE} -t $CI_REGISTRY_IMAGE:${IMAGE_TAG} . --push
   only:
