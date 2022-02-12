@@ -63,7 +63,7 @@ create-release:
         --assets-link "{\"name\":\"deemix-server-linux-static-amd64\",\"url\":\"${PACKAGE_REGISTRY_URL_STATIC}/deemix-server-linux-amd64\"}" \
         --assets-link "{\"name\":\"deemix-server-linux-static-arm64\",\"url\":\"${PACKAGE_REGISTRY_URL_STATIC}/deemix-server-linux-arm64\"}" \
         --assets-link "{\"name\":\"deemix-server-linux-static-armv7\",\"url\":\"${PACKAGE_REGISTRY_URL_STATIC}/deemix-server-linux-arm\"}" \
-        --assets-link "{\"name\":\"deemix-server-linux-static-armv7\",\"url\":\"registry.gitlab.com/bockiii/deemix-docker:${CI_COMMIT_SHORT_SHA}\"}"
+        --assets-link "{\"name\":\"deemix-server-linux-static-armv7\",\"url\":\"https://registry.gitlab.com/bockiii/deemix-docker:${CI_COMMIT_SHORT_SHA}\"}"
   only:
     refs:
       - master
