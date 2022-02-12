@@ -1,4 +1,6 @@
 FROM lsiobase/alpine:3.15
+#Add addiitional packages
+RUN apk add --no-cache curl
 ARG TARGETARCH
 ARG BUILDDATE
 ENV BUILDDATEENV=${BUILDDATE}
