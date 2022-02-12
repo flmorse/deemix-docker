@@ -55,7 +55,7 @@ create-release:
   script:
     - export DATE=$(date +%Y%m%d) #Cant tag same twice use $CI_COMMIT_SHA for a while
     - |
-      release-cli create --name "Release $$CI_COMMIT_SHA_SHORT" --tag-name $CI_COMMIT_SHA_SHORT \
+      release-cli create --name "Release $CI_COMMIT_SHA_SHORT" --tag-name $CI_COMMIT_SHA_SHORT \
         --assets-link "{\"name\":\"deemix-server-linux-amd64\",\"url\":\"${PACKAGE_REGISTRY_URL}/deemix-server-linux-amd64\"}" \
         --assets-link "{\"name\":\"deemix-server-linux-arm64\",\"url\":\"${PACKAGE_REGISTRY_URL}/deemix-server-linux-arm64\"}" \
         --assets-link "{\"name\":\"deemix-server-linux-armv7\",\"url\":\"${PACKAGE_REGISTRY_URL}/deemix-server-linux-arm\"}" \
@@ -91,7 +91,7 @@ build-docker-image:
     - docker buildx create --name multibuilder
     - docker buildx use multibuilder
     # build and push, still need fix download url in dockerfile
-    - docker buildx build --platform "${PLATFORMS}" -t ${CI_REGISTRY_IMAGE}:${IMAGE_TAG_TEST} . --push
+    - docker buildx build --platform "${PLATFORMS}" -t ${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHA_SHORT} -t ${CI_REGISTRY_IMAGE} . --push
     # Also can do using date, so we dont dependant on latest, in case application break again.
     #- docker buildx build --platform "${PLATFORMS}" -t ${CI_REGISTRY_IMAGE}:${DATE} -t $CI_REGISTRY_IMAGE:${IMAGE_TAG} . --push
   only:
