@@ -11,8 +11,9 @@ variables:
 
 stages:
   - build-deemix
-  - create-release
+  #- create-release
   - build-docker-image
+  - create-release
 
 build-deemix:
   image: node:16
