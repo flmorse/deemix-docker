@@ -55,13 +55,14 @@ create-release:
   script:
     - export DATE=$(date +%Y%m%d) #Cant tag same twice use $CI_COMMIT_SHA for a while
     - |
-      release-cli create --name "Release $CI_COMMIT_SHORT_SHA" --tag-name $CI_COMMIT_SHORT_SHA \
+      release-cli create --name "Release $CI_COMMIT_SHORT_SHA" --tag-name $CI_COMMIT_SHORT_SHA --description "rollback to this version by changing the docker TAG release code above, registry.gitlab.com/bockiii/deemix-docker:TAG" \
         --assets-link "{\"name\":\"deemix-server-linux-amd64\",\"url\":\"${PACKAGE_REGISTRY_URL}/deemix-server-linux-amd64\"}" \
         --assets-link "{\"name\":\"deemix-server-linux-arm64\",\"url\":\"${PACKAGE_REGISTRY_URL}/deemix-server-linux-arm64\"}" \
         --assets-link "{\"name\":\"deemix-server-linux-armv7\",\"url\":\"${PACKAGE_REGISTRY_URL}/deemix-server-linux-arm\"}" \
         --assets-link "{\"name\":\"deemix-server-linux-static-amd64\",\"url\":\"${PACKAGE_REGISTRY_URL_STATIC}/deemix-server-linux-amd64\"}" \
         --assets-link "{\"name\":\"deemix-server-linux-static-arm64\",\"url\":\"${PACKAGE_REGISTRY_URL_STATIC}/deemix-server-linux-arm64\"}" \
         --assets-link "{\"name\":\"deemix-server-linux-static-armv7\",\"url\":\"${PACKAGE_REGISTRY_URL_STATIC}/deemix-server-linux-arm\"}" \
+        --assets-link "{\"name\":\"deemix-server-linux-static-armv7\",\"url\":\"registry.gitlab.com/bockiii/deemix-docker:${CI_COMMIT_SHORT_SHA}\"}"
   only:
     refs:
       - master
