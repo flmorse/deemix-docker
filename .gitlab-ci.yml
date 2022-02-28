@@ -21,10 +21,9 @@ build-deemix:
   cache: 
     key: "$CI_COMMIT_REF_SLUG"
     paths:
-      - deemix-gui/pnpm-store/
-      - deemix-gui/npm_cache/
       - deemix-gui/node_modules/
       - deemix-gui/yarn-cache/
+      - deemix-gui/nodejs-cache/
     policy: pull-push
   script:
     - apt update && apt install -y --no-install-recommends zip git curl jq
@@ -36,6 +35,8 @@ build-deemix:
     - cd deemix-gui 
     # Set cache path yarn to current dir
     - yarn config set cache-folder yarn-cache
+    # Set PKG cache path 
+    - export PKG_CACHE_PATH=nodejs-cache
     # verify
     - ls -alh
     - yarn config set network-timeout 1000000 -g
