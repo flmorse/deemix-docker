@@ -28,13 +28,13 @@ build-deemix:
     policy: pull-push
   script:
     - apt update && apt install -y --no-install-recommends zip git curl jq
-    - git clone --depth=1 https://gitlab.com/RemixDev/deemix-gui.git --recursive src
+    - git clone --depth=1 https://gitlab.com/RemixDev/deemix-gui.git --recursive deemix-gui
     # Patching pkg.targets to our need
     - jq '.pkg.targets = ["node16-linuxstatic-x64","node16-linuxstatic-arm64","node16-linuxstatic-armv7"]' deemix-gui/server/package.json > tmp.$$.json && mv tmp.$$.json deemix-gui/server/package.json
     # Set cache path yarn
     - yarn config set cache-folder deemix-gui/yarn-cache
     # copy deemix-gui src to cached folder
-    - cp -r src/* deemix-gui/*
+    #- cp -r src/* deemix-gui/*
     - cd deemix-gui 
     # verify
     - ls -alh
