@@ -31,11 +31,11 @@ build-deemix:
     - git clone --depth=1 https://gitlab.com/RemixDev/deemix-gui.git --recursive src
     # Patching pkg.targets to our need
     - jq '.pkg.targets = ["node16-linuxstatic-x64","node16-linuxstatic-arm64","node16-linuxstatic-armv7"]' src/server/package.json > tmp.$$.json && mv tmp.$$.json src/server/package.json
-    # Set cache path yarn
-    - yarn config set cache-folder yarn-cache
     # copy deemix-gui src to cached folder
     - cp -r src/* deemix-gui/
     - cd deemix-gui 
+    # Set cache path yarn to current dir
+    - yarn config set cache-folder yarn-cache
     # verify
     - ls -alh
     - yarn config set network-timeout 1000000 -g
