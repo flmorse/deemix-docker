@@ -31,10 +31,10 @@ build-deemix:
     policy: pull-push
   script:
     - apt update && apt install -y --no-install-recommends zip git curl jq
-    - git clone --depth=1 https://gitlab.com/RemixDev/deemix-gui.git --recursive deemix-gui
+    - git clone --depth=1 https://gitlab.com/RemixDev/deemix-gui.git --recursive src
     # Patching pkg.targets to our need
     - jq '.pkg.targets = ["node16-linuxstatic-x64","node16-linuxstatic-arm64","node16-linuxstatic-armv7"]' src/server/package.json > tmp.$$.json && mv tmp.$$.json src/server/package.json
-    - cd deemix-gui 
+    - cd src
     - ls -alh
     - yarn config set network-timeout 1000000 -g
     - yarn add pkg@latest
