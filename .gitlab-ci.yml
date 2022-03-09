@@ -8,6 +8,10 @@ variables:
   # Docker build will download via this url
   PACKAGE_REGISTRY_URL_STATIC: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/deemix-docker/static" 
   ZIP_NAME: "deemix-docker"
+  npm_config_cache: "$CI_PROJECT_DIR/.npm"
+  PKG_CACHE_PATH: "$CI_PROJECT_DIR/.nodejs-bin"
+  YARN_CACHE_FOLDER: "$CI_PROJECT_DIR/.yarn-cache"
+  
 
 stages:
   - build-deemix
@@ -21,23 +25,16 @@ build-deemix:
   cache: 
     key: "$CI_COMMIT_REF_SLUG"
     paths:
-      - deemix-gui/node_modules/
-      - deemix-gui/yarn-cache/
-      - deemix-gui/nodejs-cache/
+      - .npm
+      - .nodejs-bin
+      - .yarn-cache
     policy: pull-push
   script:
     - apt update && apt install -y --no-install-recommends zip git curl jq
-    - git clone --depth=1 https://gitlab.com/RemixDev/deemix-gui.git --recursive src
+    - git clone --depth=1 https://gitlab.com/RemixDev/deemix-gui.git --recursive deemix-gui
     # Patching pkg.targets to our need
     - jq '.pkg.targets = ["node16-linuxstatic-x64","node16-linuxstatic-arm64","node16-linuxstatic-armv7"]' src/server/package.json > tmp.$$.json && mv tmp.$$.json src/server/package.json
-    # copy deemix-gui src to cached folder
-    - cp -r src/* deemix-gui/
     - cd deemix-gui 
-    # Set cache path yarn to current dir
-    - yarn config set cache-folder yarn-cache
-    # Set PKG cache path 
-    - export PKG_CACHE_PATH=nodejs-cache
-    # verify
     - ls -alh
     - yarn config set network-timeout 1000000 -g
     - yarn add pkg@latest
