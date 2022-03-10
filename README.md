@@ -15,6 +15,7 @@ $ docker run -d --name Deemix \
 				-e PUID=1000 \
 				-e PGID=1000 \
 				-e UMASK_SET=022 \
+				-e DEEMIX_SINGLE_USER=true \
 				-p 6595:6595 \
 				registry.gitlab.com/bockiii/deemix-docker
 ```
@@ -33,6 +34,7 @@ services:
 			- PUID=1000
 			- PGID=1000
 			- UMASK_SET=022
+			- DEEMIX_SINGLE_USER=true
 		ports:
 			- 6595:6595
 ```
@@ -41,7 +43,7 @@ services:
 
 Pull the latest container for the latest Deemix version
 
-### Explanation:
+### Parameters:
 
 | Parameter | Function |
 | :----: | --- |
@@ -50,11 +52,18 @@ Pull the latest container for the latest Deemix version
 | `-e PUID=1000` | OPTIONAL: User ID of the user you want the container to run as in order to fix folder permission issues |
 | `-e PGID=1000` | OPTIONAL: Group ID, see PUID |
 | `-e UMASK_SET=022` | OPTIONAL: Setting UMASK for file permissions Default is 022 |
+| `-e DEEMIX_SINGLE_USER=true` | OPTIONAL: Similar to the ARL functionality in previous iterations. See below for details |
 | `-p 6595:6595` | Port opened for the web interface |
 | `-e INTPORT=3333` | EXTRA OPTIONAL: This changes the internal port of deemix. DON'T CHANGE THIS IF YOU DONT KNOW WHY YOU WOULD DO IT |
 | `registry.gitlab.com/bockiii/deemix-docker` | This container |
 
 To access the web interface, go to http://YOURSERVERIP:6595 
+
+### DEEMIX_SINGLE_USER:
+
+Setting this environment variable to true will enable a serverwide login. In this mode, only one user needs to log in and every session will use the same login. You do not need to provide an ARL to the container, deemix will store the login information in the config folder.
+
+I also added a functionality that will enable Single_User mode when any ARL is configured at all. This will help legacy installations that still use old configuration parameters. As long as the ARL is set to anything, the mode is enabled. The provided ARL will NOT be processed, so you will need to login once using the web interface.
 
 ## Tags
 
