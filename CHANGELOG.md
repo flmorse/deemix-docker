@@ -1,4 +1,7 @@
 # Changelog
+## 2022-03-10
+- Completely reworked image. The gitlab CI will now build all architectures and store them as packages in the repo. Those will be pulled during build. This lowers the image footprint to 37mb, down from 150.
+- Re-added previous "serverwide-arl" functionality as "DEEMIX_SINGLE_USER". The readme shows how to use it.
 ## 2021-07-09
 - Removed Environment Variable "REVERSEPROXY" again since the original issue was fixed in the webui source. Reverse proxying should now just work by default.
 ## 2021-06-30
