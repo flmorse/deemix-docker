@@ -4,9 +4,9 @@ variables:
   DOCKER_CLI_EXPERIMENTAL: enabled
   PLATFORMS: "linux/amd64,linux/arm64,linux/arm/v7"
   PLATFORMS_TEST: "linux/amd64"
-  PACKAGE_REGISTRY_URL: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/deemix-docker/${CI_COMMIT_SHORT_SHA}"
+  PACKAGE_REGISTRY_URL: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/${CI_COMMIT_SHORT_SHA}/${CI_COMMIT_SHORT_SHA}"
   # Docker build will download via this url
-  PACKAGE_REGISTRY_URL_STATIC: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/deemix-docker/static" 
+  PACKAGE_REGISTRY_URL_STATIC: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/static/static"
   ZIP_NAME: "deemix-docker"
   npm_config_cache: "$CI_PROJECT_DIR/.npm"
   PKG_CACHE_PATH: "$CI_PROJECT_DIR/.nodejs-bin"
@@ -28,8 +28,17 @@ build-deemix:
       - .nodejs-bin
       - .yarn-cache
     policy: pull-push
-  script:
+  
+  before_script:
     - apt update && apt install -y --no-install-recommends zip git curl jq
+    # Dropping static first package first
+    - echo get package ID of static
+    - export STATIC_ID=$(curl "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages"  | jq '.[] | select(.name == "static") | .id')
+    - echo $STATIC_ID
+    - |
+      curl --request DELETE --header "PRIVATE-TOKEN: ${PAT_TOKEN}" "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/${STATIC_ID}"  
+  
+  script:
     - git clone --depth=1 https://gitlab.com/RemixDev/deemix-gui.git --recursive src
     # Patching pkg.targets to our need
     - jq '.pkg.targets = ["node16-linuxstatic-x64","node16-linuxstatic-arm64","node16-linuxstatic-armv7"]' src/server/package.json > tmp.$$.json && mv tmp.$$.json src/server/package.json
