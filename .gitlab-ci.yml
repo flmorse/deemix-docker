@@ -71,7 +71,7 @@ create-release:
   script:
     - export DATE=$(date +%Y%m%d) # Cant tag same twice use $CI_COMMIT_SHA for a while
     - |
-      release-cli create --name "Release $CI_COMMIT_SHORT_SHA $DATE" --tag-name $CI_COMMIT_SHORT_SHA --description "rollback to this version by changing the TAG release code above, `registry.gitlab.com/bockiii/deemix-docker:TAG`" \
+      release-cli create --name "Release $CI_COMMIT_SHORT_SHA" --tag-name $CI_COMMIT_SHORT_SHA --description "rollback to this version by changing the TAG release code above, registry.gitlab.com/bockiii/deemix-docker:TAG" \
         --assets-link "{\"name\":\"deemix-server-linux-amd64\",\"url\":\"${PACKAGE_REGISTRY_URL}/deemix-server-linux-amd64\"}" \
         --assets-link "{\"name\":\"deemix-server-linux-arm64\",\"url\":\"${PACKAGE_REGISTRY_URL}/deemix-server-linux-arm64\"}" \
         --assets-link "{\"name\":\"deemix-server-linux-armv7\",\"url\":\"${PACKAGE_REGISTRY_URL}/deemix-server-linux-arm\"}" \
@@ -94,8 +94,6 @@ build-docker-image:
     - export CI_JOB_TIMESTAMP=$(date --utc -Iseconds)
     - export DATE=$(date +%Y%m%d)
   script:
-    # Format 20220212
-    - export DATE=$(date +%Y%m%d) 
     # Download latest buildx bin from github
     - mkdir -p ~/.docker/cli-plugins/
     - BUILDX_LATEST_BIN_URI=$(curl -s -L https://github.com/docker/buildx/releases/latest | grep 'linux-amd64' | grep 'href' | sed 's/.*href="/https:\/\/github.com/g; s/amd64".*/amd64/g')
