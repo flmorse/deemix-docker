@@ -59,9 +59,9 @@ build-deemix:
       curl --header "JOB-TOKEN: ${CI_JOB_TOKEN}" --upload-file dist/deemix-server-arm64 ${PACKAGE_REGISTRY_URL}/deemix-server-linux-arm64
     - |
       curl --header "JOB-TOKEN: ${CI_JOB_TOKEN}" --upload-file dist/deemix-server-armv7 ${PACKAGE_REGISTRY_URL}/deemix-server-linux-arm
-#  only:
-#    refs:
-#      - master
+  only:
+    refs:
+      - master
 
 create-release:
   stage: create-release
@@ -79,9 +79,9 @@ create-release:
         --assets-link "{\"name\":\"deemix-server-linux-static-arm64\",\"url\":\"${PACKAGE_REGISTRY_URL_STATIC}/deemix-server-linux-arm64\"}" \
         --assets-link "{\"name\":\"deemix-server-linux-static-armv7\",\"url\":\"${PACKAGE_REGISTRY_URL_STATIC}/deemix-server-linux-arm\"}" \
         --assets-link "{\"name\":\"deemix-server-docker-pull\",\"url\":\"https://registry.gitlab.com/bockiii/deemix-docker:${CI_COMMIT_SHORT_SHA}\"}"
-#  only:
-#    refs:
-#      - master
+  only:
+    refs:
+      - master
 
 build-docker-image:
   image: docker:20
@@ -107,6 +107,6 @@ build-docker-image:
     - docker buildx use multibuilder
     # build and push
     - docker buildx build --platform "${PLATFORMS}" --build-arg BUILDDATE=$DATE --build-arg STATIC_URL=$PACKAGE_REGISTRY_URL_STATIC -t ${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHORT_SHA} -t ${CI_REGISTRY_IMAGE} . --push
-#  only:
-#    refs:
-#      - master
+  only:
+    refs:
+      - master
