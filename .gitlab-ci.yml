@@ -1,13 +1,9 @@
 variables:
-  IMAGE_TAG: latest
-  IMAGE_TAG_TEST: test
   DOCKER_CLI_EXPERIMENTAL: enabled
   PLATFORMS: "linux/amd64,linux/arm64,linux/arm/v7"
-  PLATFORMS_TEST: "linux/amd64"
-  PACKAGE_REGISTRY_URL: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/deemix-docker/${CI_COMMIT_SHORT_SHA}"
+  PACKAGE_REGISTRY_URL: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/${CI_COMMIT_SHORT_SHA}/${CI_COMMIT_SHORT_SHA}"
   # Docker build will download via this url
-  PACKAGE_REGISTRY_URL_STATIC: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/deemix-docker/static" 
-  ZIP_NAME: "deemix-docker"
+  PACKAGE_REGISTRY_URL_STATIC: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/static/static"
   npm_config_cache: "$CI_PROJECT_DIR/.npm"
   PKG_CACHE_PATH: "$CI_PROJECT_DIR/.nodejs-bin"
   YARN_CACHE_FOLDER: "$CI_PROJECT_DIR/.yarn-cache"
@@ -28,8 +24,17 @@ build-deemix:
       - .nodejs-bin
       - .yarn-cache
     policy: pull-push
-  script:
+  
+  before_script:
     - apt update && apt install -y --no-install-recommends zip git curl jq
+    # Dropping static first package first
+    - echo get package ID of static
+    - export STATIC_ID=$(curl "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages"  | jq '.[] | select(.name == "static") | .id')
+    - echo $STATIC_ID
+    - |
+      curl --request DELETE --header "PRIVATE-TOKEN: ${PAT_TOKEN}" "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/${STATIC_ID}"  
+  
+  script:
     - git clone --depth=1 https://gitlab.com/RemixDev/deemix-gui.git --recursive src
     # Patching pkg.targets to our need
     - jq '.pkg.targets = ["node16-linuxstatic-x64","node16-linuxstatic-arm64","node16-linuxstatic-armv7"]' src/server/package.json > tmp.$$.json && mv tmp.$$.json src/server/package.json
@@ -40,7 +45,7 @@ build-deemix:
     - yarn install-all
     - yarn dist-server
     - ls -al dist/
-    # Upload static
+    # Upload static files (overwritten) per build
     - |
       curl --header "JOB-TOKEN: ${CI_JOB_TOKEN}" --upload-file dist/deemix-server-x64 ${PACKAGE_REGISTRY_URL_STATIC}/deemix-server-linux-amd64
     - |
@@ -62,11 +67,11 @@ create-release:
   stage: create-release
   image: registry.gitlab.com/gitlab-org/release-cli:latest
   #rules:
-  #  - if: $CI_COMMIT_SHA
+  #  - if: $CI_COMMIT_TAG
   script:
-    - export DATE=$(date +%Y%m%d) #Cant tag same twice use $CI_COMMIT_SHA for a while
+    - export DATE=$(date +%Y%m%d) # Cant tag same twice use $CI_COMMIT_SHA for a while
     - |
-      release-cli create --name "Release $CI_COMMIT_SHORT_SHA" --tag-name $CI_COMMIT_SHORT_SHA --description "rollback to this version by changing the docker TAG release code above, registry.gitlab.com/bockiii/deemix-docker:TAG" \
+      release-cli create --name "Release $CI_COMMIT_SHORT_SHA" --tag-name $CI_COMMIT_SHORT_SHA --description "rollback to this version by changing the TAG release code above, registry.gitlab.com/bockiii/deemix-docker:TAG" \
         --assets-link "{\"name\":\"deemix-server-linux-amd64\",\"url\":\"${PACKAGE_REGISTRY_URL}/deemix-server-linux-amd64\"}" \
         --assets-link "{\"name\":\"deemix-server-linux-arm64\",\"url\":\"${PACKAGE_REGISTRY_URL}/deemix-server-linux-arm64\"}" \
         --assets-link "{\"name\":\"deemix-server-linux-armv7\",\"url\":\"${PACKAGE_REGISTRY_URL}/deemix-server-linux-arm\"}" \
@@ -79,9 +84,7 @@ create-release:
       - master
 
 build-docker-image:
-  image: docker:19
-  #dependencies:
-  #  - build-deemix
+  image: docker:20
   stage: build-docker-image
   services:
     - docker:dind
@@ -92,8 +95,6 @@ build-docker-image:
     - export DATE=$(date +%Y%m%d)
   script:
     # Download latest buildx bin from github
-    - export DATE=$(date +%Y%m%d) 
-    #Format 20220212
     - mkdir -p ~/.docker/cli-plugins/
     - BUILDX_LATEST_BIN_URI=$(curl -s -L https://github.com/docker/buildx/releases/latest | grep 'linux-amd64' | grep 'href' | sed 's/.*href="/https:\/\/github.com/g; s/amd64".*/amd64/g')
     - curl -s -L ${BUILDX_LATEST_BIN_URI} -o ~/.docker/cli-plugins/docker-buildx
@@ -104,10 +105,8 @@ build-docker-image:
     # create the multibuilder
     - docker buildx create --name multibuilder
     - docker buildx use multibuilder
-    # build and push, still need fix download url in dockerfile
+    # build and push
     - docker buildx build --platform "${PLATFORMS}" --build-arg BUILDDATE=$DATE --build-arg STATIC_URL=$PACKAGE_REGISTRY_URL_STATIC -t ${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHORT_SHA} -t ${CI_REGISTRY_IMAGE} . --push
-    # Also can do using date, so we dont dependant on latest, in case application break again.
-    #- docker buildx build --platform "${PLATFORMS}" -t ${CI_REGISTRY_IMAGE}:${DATE} -t $CI_REGISTRY_IMAGE:${IMAGE_TAG} . --push
   only:
     refs:
       - master
