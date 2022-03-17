@@ -1,7 +1,6 @@
 variables:
   DOCKER_CLI_EXPERIMENTAL: enabled
   PLATFORMS: "linux/amd64,linux/arm64,linux/arm/v7"
-  PACKAGE_REGISTRY_URL: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/${CI_COMMIT_SHORT_SHA}/${CI_COMMIT_SHORT_SHA}"
   # Docker build will download via this url
   PACKAGE_REGISTRY_URL_STATIC: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/static/static"
   npm_config_cache: "$CI_PROJECT_DIR/.npm"
@@ -32,7 +31,11 @@ build-deemix:
     - export STATIC_ID=$(curl "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages"  | jq '.[] | select(.name == "static") | .id')
     - echo $STATIC_ID
     - |
-      curl --request DELETE --header "PRIVATE-TOKEN: ${PAT_TOKEN}" "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/${STATIC_ID}"  
+      curl --request DELETE --header "PRIVATE-TOKEN: ${PAT_TOKEN}" "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/${STATIC_ID}"
+    - echo get current version for tagging
+    - export DEEMIX_VERSION=$(curl -s "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/repository/files/version/raw?ref=master")
+    - echo $DEEMIX_VERSION
+    - export PACKAGE_REGISTRY_URL="${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/${DEEMIX_VERSION}/${DEEMIX_VERSION}"
   
   script:
     - git clone --depth=1 https://gitlab.com/RemixDev/deemix-gui.git --recursive src
@@ -52,7 +55,7 @@ build-deemix:
       curl --header "JOB-TOKEN: ${CI_JOB_TOKEN}" --upload-file dist/deemix-server-arm64 ${PACKAGE_REGISTRY_URL_STATIC}/deemix-server-linux-arm64
     - |
       curl --header "JOB-TOKEN: ${CI_JOB_TOKEN}" --upload-file dist/deemix-server-armv7 ${PACKAGE_REGISTRY_URL_STATIC}/deemix-server-linux-arm
-    # Upload per CI_COMMIT_SHORT_SHA
+    # Upload per DEEMIX_VERSION
     - |
       curl --header "JOB-TOKEN: ${CI_JOB_TOKEN}" --upload-file dist/deemix-server-x64 ${PACKAGE_REGISTRY_URL}/deemix-server-linux-amd64
     - |
@@ -69,16 +72,16 @@ create-release:
   #rules:
   #  - if: $CI_COMMIT_TAG
   script:
-    - export DATE=$(date +%Y%m%d) # Cant tag same twice use $CI_COMMIT_SHA for a while
+    - export DATE=$(date +%Y%m%d)
     - |
-      release-cli create --name "Release $CI_COMMIT_SHORT_SHA" --tag-name $CI_COMMIT_SHORT_SHA --description "rollback to this version by changing the TAG release code above, registry.gitlab.com/bockiii/deemix-docker:TAG" \
+      release-cli create --name "Release $DEEMIX_VERSION" --tag-name $DEEMIX_VERSION --description "rollback to this version by changing the TAG release code above, registry.gitlab.com/bockiii/deemix-docker:TAG" \
         --assets-link "{\"name\":\"deemix-server-linux-amd64\",\"url\":\"${PACKAGE_REGISTRY_URL}/deemix-server-linux-amd64\"}" \
         --assets-link "{\"name\":\"deemix-server-linux-arm64\",\"url\":\"${PACKAGE_REGISTRY_URL}/deemix-server-linux-arm64\"}" \
         --assets-link "{\"name\":\"deemix-server-linux-armv7\",\"url\":\"${PACKAGE_REGISTRY_URL}/deemix-server-linux-arm\"}" \
         --assets-link "{\"name\":\"deemix-server-linux-static-amd64\",\"url\":\"${PACKAGE_REGISTRY_URL_STATIC}/deemix-server-linux-amd64\"}" \
         --assets-link "{\"name\":\"deemix-server-linux-static-arm64\",\"url\":\"${PACKAGE_REGISTRY_URL_STATIC}/deemix-server-linux-arm64\"}" \
         --assets-link "{\"name\":\"deemix-server-linux-static-armv7\",\"url\":\"${PACKAGE_REGISTRY_URL_STATIC}/deemix-server-linux-arm\"}" \
-        --assets-link "{\"name\":\"deemix-server-docker-pull\",\"url\":\"https://registry.gitlab.com/bockiii/deemix-docker:${CI_COMMIT_SHORT_SHA}\"}"
+        --assets-link "{\"name\":\"deemix-server-docker-pull\",\"url\":\"https://registry.gitlab.com/bockiii/deemix-docker:${DEEMIX_VERSION}\"}"
   only:
     refs:
       - master
@@ -106,7 +109,7 @@ build-docker-image:
     - docker buildx create --name multibuilder
     - docker buildx use multibuilder
     # build and push
-    - docker buildx build --platform "${PLATFORMS}" --build-arg BUILDDATE=$DATE --build-arg STATIC_URL=$PACKAGE_REGISTRY_URL_STATIC -t ${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHORT_SHA} -t ${CI_REGISTRY_IMAGE} . --push
+    - docker buildx build --platform "${PLATFORMS}" --build-arg BUILDDATE=$DATE --build-arg STATIC_URL=$PACKAGE_REGISTRY_URL_STATIC -t ${CI_REGISTRY_IMAGE}:${DEEMIX_VERSION} -t ${CI_REGISTRY_IMAGE} . --push
   only:
     refs:
       - master
