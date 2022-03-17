@@ -1,6 +1,7 @@
 variables:
   DOCKER_CLI_EXPERIMENTAL: enabled
   PLATFORMS: "linux/amd64,linux/arm64,linux/arm/v7"
+  PACKAGE_REGISTRY_URL: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic"
   # Docker build will download via this url
   PACKAGE_REGISTRY_URL_STATIC: "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/static/static"
   npm_config_cache: "$CI_PROJECT_DIR/.npm"
@@ -33,9 +34,8 @@ build-deemix:
     - |
       curl --request DELETE --header "PRIVATE-TOKEN: ${PAT_TOKEN}" "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/${STATIC_ID}"
     - echo get current version for tagging
-    - export DEEMIX_VERSION=$(curl -s "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/repository/files/version/raw?ref=master")
+    - export DEEMIX_VERSION=$(cat $CI_PROJECT_DIR/version)
     - echo $DEEMIX_VERSION
-    - export PACKAGE_REGISTRY_URL="${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/packages/generic/${DEEMIX_VERSION}/${DEEMIX_VERSION}"
   
   script:
     - git clone --depth=1 https://gitlab.com/RemixDev/deemix-gui.git --recursive src
@@ -57,11 +57,11 @@ build-deemix:
       curl --header "JOB-TOKEN: ${CI_JOB_TOKEN}" --upload-file dist/deemix-server-armv7 ${PACKAGE_REGISTRY_URL_STATIC}/deemix-server-linux-arm
     # Upload per DEEMIX_VERSION
     - |
-      curl --header "JOB-TOKEN: ${CI_JOB_TOKEN}" --upload-file dist/deemix-server-x64 ${PACKAGE_REGISTRY_URL}/deemix-server-linux-amd64
+      curl --header "JOB-TOKEN: ${CI_JOB_TOKEN}" --upload-file dist/deemix-server-x64 ${PACKAGE_REGISTRY_URL}/${DEEMIX_VERSION}/${DEEMIX_VERSION}/deemix-server-linux-amd64
     - |
-      curl --header "JOB-TOKEN: ${CI_JOB_TOKEN}" --upload-file dist/deemix-server-arm64 ${PACKAGE_REGISTRY_URL}/deemix-server-linux-arm64
+      curl --header "JOB-TOKEN: ${CI_JOB_TOKEN}" --upload-file dist/deemix-server-arm64 ${PACKAGE_REGISTRY_URL}/${DEEMIX_VERSION}/${DEEMIX_VERSION}/deemix-server-linux-arm64
     - |
-      curl --header "JOB-TOKEN: ${CI_JOB_TOKEN}" --upload-file dist/deemix-server-armv7 ${PACKAGE_REGISTRY_URL}/deemix-server-linux-arm
+      curl --header "JOB-TOKEN: ${CI_JOB_TOKEN}" --upload-file dist/deemix-server-armv7 ${PACKAGE_REGISTRY_URL}/${DEEMIX_VERSION}/${DEEMIX_VERSION}/deemix-server-linux-arm
   only:
     refs:
       - master
@@ -73,11 +73,12 @@ create-release:
   #  - if: $CI_COMMIT_TAG
   script:
     - export DATE=$(date +%Y%m%d)
+    - export DEEMIX_VERSION=$(cat $CI_PROJECT_DIR/version)
     - |
       release-cli create --name "Release $DEEMIX_VERSION" --tag-name $DEEMIX_VERSION --description "rollback to this version by changing the TAG release code above, registry.gitlab.com/bockiii/deemix-docker:TAG" \
-        --assets-link "{\"name\":\"deemix-server-linux-amd64\",\"url\":\"${PACKAGE_REGISTRY_URL}/deemix-server-linux-amd64\"}" \
-        --assets-link "{\"name\":\"deemix-server-linux-arm64\",\"url\":\"${PACKAGE_REGISTRY_URL}/deemix-server-linux-arm64\"}" \
-        --assets-link "{\"name\":\"deemix-server-linux-armv7\",\"url\":\"${PACKAGE_REGISTRY_URL}/deemix-server-linux-arm\"}" \
+        --assets-link "{\"name\":\"deemix-server-linux-amd64\",\"url\":\"${PACKAGE_REGISTRY_URL}/${DEEMIX_VERSION}/${DEEMIX_VERSION}/deemix-server-linux-amd64\"}" \
+        --assets-link "{\"name\":\"deemix-server-linux-arm64\",\"url\":\"${PACKAGE_REGISTRY_URL}/${DEEMIX_VERSION}/${DEEMIX_VERSION}/deemix-server-linux-arm64\"}" \
+        --assets-link "{\"name\":\"deemix-server-linux-armv7\",\"url\":\"${PACKAGE_REGISTRY_URL}/${DEEMIX_VERSION}/${DEEMIX_VERSION}/deemix-server-linux-arm\"}" \
         --assets-link "{\"name\":\"deemix-server-linux-static-amd64\",\"url\":\"${PACKAGE_REGISTRY_URL_STATIC}/deemix-server-linux-amd64\"}" \
         --assets-link "{\"name\":\"deemix-server-linux-static-arm64\",\"url\":\"${PACKAGE_REGISTRY_URL_STATIC}/deemix-server-linux-arm64\"}" \
         --assets-link "{\"name\":\"deemix-server-linux-static-armv7\",\"url\":\"${PACKAGE_REGISTRY_URL_STATIC}/deemix-server-linux-arm\"}" \
@@ -96,6 +97,7 @@ build-docker-image:
     - apk add --update curl jq && rm -rf /var/cache/apk/*
     - export CI_JOB_TIMESTAMP=$(date --utc -Iseconds)
     - export DATE=$(date +%Y%m%d)
+    - export DEEMIX_VERSION=$(cat $CI_PROJECT_DIR/version)
   script:
     # Download latest buildx bin from github
     - mkdir -p ~/.docker/cli-plugins/
