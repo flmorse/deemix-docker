@@ -48,7 +48,7 @@ build-deemix:
     - cd src
     - export DEEMIX_BUILD_SHA=$(curl https://deemix.app/gui/latest | rev | cut -c1-10 | rev)
     - git reset --hard --recurse-submodules $DEEMIX_BUILD_SHA
-    - jq '.pkg.targets = ["node16-linuxstatic-x64","node16-linuxstatic-arm64","node16-linuxstatic-armv7"]' src/server/package.json > tmp.$$.json && mv tmp.$$.json src/server/package.json
+    - jq '.pkg.targets = ["node16-linuxstatic-x64","node16-linuxstatic-arm64","node16-linuxstatic-armv7"]' server/package.json > tmp.$$.json && mv tmp.$$.json server/package.json
     - ls -alh
     - yarn config set network-timeout 1000000 -g
     - yarn add pkg@latest
